@@ -3,13 +3,13 @@ require_once("PlexWatchWatched.php");
 
 class PlexWatch {
     function __construct($dbpath, $grouped = false) {
-        $this->dbh = new SQLite3($dbpath);
+        $this->_dbh = new SQLite3($dbpath);
 
-        $this->grouped = $grouped;
+        $this->_grouped = $grouped;
     }
 
     public function query() {
-        $statement = $this->dbh->prepare("SELECT * FROM " . $this->getWatchedTable() . " ORDER BY time DESC LIMIT 50");
+        $statement = $this->_dbh->prepare("SELECT * FROM " . $this->getWatchedTable() . " ORDER BY time DESC LIMIT 50");
         $result = $statement->execute();
 
         $watched = array();
@@ -21,7 +21,7 @@ class PlexWatch {
     }
 
     public function getLatestWatched($limit = 10, $users = null) {
-        $statement = $this->dbh->prepare("SELECT * FROM " . $this->getWatchedTable() . " ORDER BY id DESC LIMIT :limit");
+        $statement = $this->_dbh->prepare("SELECT * FROM " . $this->getWatchedTable() . " ORDER BY id DESC LIMIT :limit");
         $statement->bindValue(":limit", $limit, SQLITE3_INTEGER);
 
         $result = $statement->execute();
@@ -34,14 +34,14 @@ class PlexWatch {
     }
 
     private function getWatchedTable () {
-        if ($this->grouped) {
+        if ($this->_grouped) {
             return "grouped";
         }
         return "processed";
     }
 
-    private $dbh;
-    private $grouped;
+    private $_dbh;
+    private $_grouped;
 }
 
 

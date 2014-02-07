@@ -8,12 +8,12 @@ angular.module("plex-wwwatch",
     ])
 .service("Settings", function ($http) {
     this.save = function (settings) {
-        $http.post("backend/settings", settings).success(function (data) {
+        $http.post("backend/settings.php", settings).success(function (data) {
         });
     };
 
     this.get = function () {
-        var promise = $http.get("backend/settings").success(function (data) {
+        var promise = $http.get("backend/settings.php").success(function (data) {
             if (data) {
                 return data;
             }
@@ -41,7 +41,7 @@ angular.module("plex-wwwatch",
                 }
             }
         })
-        .otherwise({ redirectTo: "/" })
+        .otherwise({ redirectTo: "/home" })
         ;
 }])
 .run(function ($rootScope, Settings) {
@@ -71,7 +71,7 @@ function HomeCtrl ($scope, $http, $filter, ngTableParams) {
         }
      });
 
-    $http({method: "GET", url: "backend/watched"}).success(function (data) {
+    $http({method: "GET", url: "backend/watched.php"}).success(function (data) {
         watched = data;
         $scope.tableParams.total(watched.length);
 
