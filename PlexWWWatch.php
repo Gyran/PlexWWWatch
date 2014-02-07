@@ -13,6 +13,15 @@ class PlexWWWatch {
         return $this->_settings;
     }
 
+    public function saveSettings($settings) {
+        if ($this->_vaildSettings($settings)) {
+            file_put_contents(__DIR__ . self::$SETTINGS_FILE, json_encode($settings));
+            $this->_settings = $settings;
+            return true;
+        }
+        return false;
+    }
+
     public function plexWatch() {
         if (!$this->_plexWatch) {
             $settings = $this->settings();
@@ -23,8 +32,8 @@ class PlexWWWatch {
     }
 
     private function _readSettings () {
-        if (file_exists(self::$SETTINGS_FILE)) {
-            $settings = json_encode(file_get_contents(self::$SETTINGS_FILE));
+        if (file_exists(__DIR__ . self::$SETTINGS_FILE)) {
+            $settings = json_decode(file_get_contents(__DIR__ . self::$SETTINGS_FILE));
         } else {
             $settings = $this->_defaultSettings();
         }
@@ -39,6 +48,10 @@ class PlexWWWatch {
         $settings->plexMediaServerHost = "";
 
         return $settings;
+    }
+
+    private function _vaildSettings($settings) {
+        return true;
     }
 
     private $_plexWatch = null;
