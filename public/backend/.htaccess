@@ -1,0 +1,6 @@
+# Apache (.htaccess or httpd.conf)
+# Make sure AllowOverride is on for the directory, or put the rewrite rules in httpd.conf
+# http://httpd.apache.org/docs/2.0/mod/core.html#allowoverride
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . index.php [L]

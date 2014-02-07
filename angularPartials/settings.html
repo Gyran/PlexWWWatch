@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="settings-container well">
+    <div class="well-header">
+      <ul class="subnav-list well-header-list">
+        <li><i class="subnav-icon glyphicon settings"></i></li>
+        <li>Settings</li>
+      </ul>
+    </div>
+
+    <div>
+      <form class="preferences-form" ng-dirty>
+        <fieldset>
+          <div class="preferences-group active">
+            <div class="control-group">
+              <label class="control-label" for="input_dbPath">
+                Plex Media Server Host
+              </label>
+              <div class="controls">
+                <input id="input_dbPath" type="text" class="input-dark span4" name="FriendlyName" ng-model="settings.plexMediaServerHost">
+                <p class="help-block">
+                  hostname for the Plex Media Server
+                </p>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="input_dbPath">
+                Plex Watch database file
+              </label>
+              <div class="controls">
+                <input id="input_dbPath" type="text" class="input-dark span4" name="FriendlyName" ng-model="settings.dbPath">
+                <p class="help-block">
+                  Location of the Plex Watch database
+                </p>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="checkbox" for="input_grouped">
+                <input id="input_grouped" type="checkbox" value="1" class="input-dark" name="collectUsageData" ng-model="settings.grouped"> &nbsp;Grouped data
+              </label>
+              <p class="help-block">
+                Group results
+              </p>
+            </div>
+        </div>
+
+        <div class="main-actions form-actions">
+          <button type="submit" class="btn btn-medium btn-primary" ng-click="save(settings)">
+            Save
+          </button>
+        </div>
+        </fieldset>
+      </form>
+    </div>
+
+  </div>
+</div>

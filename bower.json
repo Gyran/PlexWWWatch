@@ -1,0 +1,14 @@
+{
+  "name": "PlexWWWatch",
+  "version": "0.1",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "angular-resource": "~1.2.10",
+    "angular-route": "~1.2.10",
+    "angular-moment": "~0.6.1"
+  }
+}

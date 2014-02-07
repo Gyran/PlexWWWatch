@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html ng-app="plex-wwwatch">
+  <head>
+    <script src="build/bower.js"></script>
+    <script src="build/script.js"></script>
+    <script src="build/partials.min.js"></script>
+    <link href="build/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="application">
+      <div class="navbar navbar-fixed-top">
+
+        <ul class="nav breadcrumbbar">
+          <li>
+            <a class="navbar-glyphicon-btn home-icon-btn active" href="/#/home">
+              <i class="glyphicon home"></i>
+            </a>
+          </li>
+        </ul>
+
+        <ul class="nav iconbar">
+          <li>
+            <a class="navbar-glyphicon-btn settings-icon-btn" href="/#/settings" rel="tooltip">
+              <i class="glyphicon settings"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="scroll-container minimal-scrollbar">
+        <div ng-view></div>
+      </div>
+    </body>
+</html>

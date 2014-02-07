@@ -1,0 +1,106 @@
+<div class="dashboard-container container">
+  <div class="row show-sidebar fluid">
+      <div class="priority0">
+        <div class="row-fluid module">
+          <div class="well span12">
+            <div class="dashboard-well-header well-header">
+
+              <ul class="well-header-actions">
+
+                <li>
+                  <div ng-if="tableParams.settings().counts.length" class="btn-group btn-group-inverse">
+                    <button ng-repeat="count in tableParams.settings().counts" type="button" ng-class="{'active':tableParams.count()==count}" ng-click="tableParams.count(count)" class="btn btn-inverse">
+                      <span ng-bind="count" class="ng-binding"></span>
+                    </button>
+                  </div>
+                </li>
+
+                <li class="well-header-pagination">
+                  <span class="page">
+                    {{ tableParams.page() }}
+                  </span> of <span class="pages">{{ pages() }}</span>
+                </li>
+                <li>
+                  <div class="btn-group btn-group-inverse">
+                    <button type="button" class="previous-btn btn btn-inverse btn-icon"
+                      ng-disabled="tableParams.page() <= 1"
+                      ng-click="tableParams.page(tableParams.page() - 1)">
+                      <i class="glyphicon chevron-left"></i>
+                    </button>
+                    <button type="button" class="next-btn btn btn-inverse btn-icon"
+                      ng-disabled="tableParams.page() >= pages()"
+                      ng-click="tableParams.page(tableParams.page() + 1)">
+                      <i class="glyphicon chevron-right"></i>
+                    </button>
+                  </div>
+                </li>
+              </ul>
+
+              <h3>Recently watched</h3>
+            </div>
+
+            <table ng-table="tableParams" class="history">
+              <tr ng-repeat="w in $data">
+                <td data-title="" class="poster-container">
+                  <div class="poster">
+                    <img ng-src="{{ thumb(w) }}" class="poster">
+                    <div class="state">
+                      <i class="glyphicon" ng-class="{stop: w.stopped > 0, pause: w.paused > 0, play: w.paused == 0 && w.stopped == 0}"></i>
+                    </div>
+                    <div class="progress-bar">
+                      <div class="track" style="width: {{ progress(w) }}%"></div>
+                    </div>
+                  </div>
+                </td>
+
+
+                <td data-title="" sortable="'time'" class="time-container">
+
+                  <!-- started at -->
+                  <h4>
+                    {{ w.time | amDateFormat:"YYYY-MM-DD" }}
+                  </h4>
+                  <p class="card-details">
+                    {{ w.time | amDateFormat:"HH:mm:ss" }}
+                  </p>
+
+                  <!-- stopped at -->
+                  <h4 ng-hide="!w.stopped">
+                    {{ w.stopped | amDateFormat:"YYYY-MM-DD" }}
+                  </h4>
+                  <p class="card-details" ng-hide="!w.stopped">
+                    {{ w.stopped | amDateFormat:"HH:mm:ss" }}
+                  </p>
+                  <p class="card-details">
+                    {{ timeWatched(w) }} watched
+                  </p>
+                </td>
+
+                <td data-title="" sortable="'user'" class="user-container">
+                  <h4>
+                    {{ w.user }}
+                  </h4>
+                  <p class="card-details">
+                    {{ w.platform }}
+                  </p>
+                  <p class="card-details" ng-hide="w.ipAddress == '0'">
+                    {{ w.ipAddress }}
+                  </p>
+                </td>
+
+                <td data-title="" sortable="'orig_title_ep'" class="title-container">
+                  <h4>
+                    {{ w.origTitle }}
+                  </h4>
+                  <p class="card-details">
+                    Season {{ w.season }} Episode {{w.episode }} - {{ w.origTitleEp }}
+                  </p>
+                </td>
+
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
