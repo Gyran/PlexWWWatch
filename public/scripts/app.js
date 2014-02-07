@@ -108,6 +108,9 @@ function HomeCtrl ($scope, $http, $filter, ngTableParams) {
     };
 
     $scope.thumb = function (w) {
+        if (w.thumb === "") {
+            return "img/poster.png";
+        }
         return $scope.settings.plexMediaServerHost + w.thumb;
     };
 }

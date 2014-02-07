@@ -9,7 +9,7 @@ class PlexWatch {
     }
 
     public function query() {
-        $statement = $this->_dbh->prepare("SELECT * FROM " . $this->getWatchedTable() . " ORDER BY time DESC LIMIT 50");
+        $statement = $this->_dbh->prepare("SELECT * FROM " . $this->_getWatchedTable() . " ORDER BY time DESC");
         $result = $statement->execute();
 
         $watched = array();
@@ -20,20 +20,7 @@ class PlexWatch {
         return $watched;
     }
 
-    public function getLatestWatched($limit = 10, $users = null) {
-        $statement = $this->_dbh->prepare("SELECT * FROM " . $this->getWatchedTable() . " ORDER BY id DESC LIMIT :limit");
-        $statement->bindValue(":limit", $limit, SQLITE3_INTEGER);
-
-        $result = $statement->execute();
-        $watched = array();
-        while($res = $result->fetchArray(SQLITE3_ASSOC)) {
-            $watched[] = new PlexWatchWatched($res);
-        }
-
-        return $watched;
-    }
-
-    private function getWatchedTable () {
+    private function _getWatchedTable () {
         if ($this->_grouped) {
             return "grouped";
         }

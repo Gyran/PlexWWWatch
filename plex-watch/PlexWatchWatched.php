@@ -22,15 +22,30 @@ class PlexWatchWatched implements JsonSerializable {
         $this->pausedCounter    = $dbrow["paused_counter"] * 1000;
         $this->ipAddress        = $dbrow["ip_address"];
 
+        $this->thumb = "";
         $xml = new SimpleXmlElement($dbrow["xml"]);
         if ($xml["type"] == "movie") {
-            $this->thumb = $xml["thumb"]->__toString();
+            if (isset($xml["thumb"])) {
+                $this->thumb = $xml["thumb"]->__toString();
+            }
         } else if ($xml["type"] == "episode") {
-            $this->thumb = $xml["parentThumb"]->__toString();
+            if (isset($xml["parentThumb"])) {
+                $this->thumb = $xml["parentThumb"]->__toString();
+            } else if (isset($xml["grandparentThumb"])) {
+                $this->thumb = $xml["grandparentThumb"]->__toString();
+            } else if (isset($xml["thumb"])) {
+                $this->thumb = $xml["thumb"]->__toString();
+            }
         }
-        $this->duration = $xml["duration"]->__toString();
-        $this->viewOffset = $xml["viewOffset"]->__toString();
+        $this->duration = 0;
+        if (isset($xml["duration"])) {
+            $this->duration = $xml["duration"]->__toString();
+        }
 
+        $this->viewOffset = 0;
+        if (isset($xml["viewOffset"])) {
+            $this->viewOffset = $xml["viewOffset"]->__toString();
+        }
 
     }
 
