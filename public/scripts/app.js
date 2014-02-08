@@ -49,6 +49,10 @@ angular.module("plex-wwwatch",
 ;
 
 function HomeCtrl ($scope, $http, $filter, ngTableParams) {
+
+}
+
+function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams) {
     var watched = [];
 
     $scope.tableParams = new ngTableParams({
@@ -80,42 +84,61 @@ function HomeCtrl ($scope, $http, $filter, ngTableParams) {
     $scope.pages = function () {
         return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
     };
+}
 
-    $scope.progress = function (w) {
-        var percent = w.viewOffset / w.duration * 100;
+
+
+function WatchedRowCtrl ($scope) {
+    (function () {
+        var percent = ($scope.w.viewOffset / $scope.w.duration) * 100;
         if (percent > 90) {
-            return 100;
+            $scope.w.progress = 100    ;
+        } else {
+            $scope.w.progress = percent;
         }
-        return percent;
-    };
+    }());
 
-    $scope.timeWatched = function (w) {
-        var start_time = w.time;
+    (function () {
+        var start_time = $scope.w.time;
         var stop_time = 0;
 
-        if (w.stopped > 0) {
-            stop_time = w.stopped;
-        } else if (w.paused > 0) {
-            stop_time = w.paused;
+        if ($scope.w.stopped > 0) {
+            stop_time = $scope.w.stopped;
+        } else if ($scope.w.paused > 0) {
+            stop_time = $scope.w.paused;
         } else {
             stop_time = moment().valueOf();
         }
 
-        var ms = stop_time - start_time - w.pausedCounter;
+        var ms = stop_time - start_time - $scope.w.pausedCounter;
 
-        return moment.duration(ms).humanize();
-    };
+        $scope.w.timeWatched = moment.duration(ms).humanize();
+    }());
 
-    $scope.timePaused = function (w) {
-        return moment.duration(w.pausedCounter).humanize();
-    };
+    (function () {
+        $scope.w.timePaused = moment.duration($scope.w.pausedCounter).humanize();
+    })();
 
-    $scope.thumb = function (w) {
-        if (w.thumb === "") {
-            return "img/poster.png";
+    (function () {
+        var thumb = "img/poster.png";
+        if ($scope.w.thumb !== "") {
+            thumb = $scope.settings.plexMediaServerHost + $scope.w.thumb;
         }
-        return $scope.settings.plexMediaServerHost + w.thumb;
-    };
+        $scope.w.thumb = thumb;
+    })();
+
+    (function () {
+        var templates = {
+            "episode": "partials/watchedRowEpisode.html",
+            "movie": "partials/watchedRowMovie.html"
+        };
+        var template = "partials/watchedRow.html";
+
+        if (templates.hasOwnProperty($scope.w.type)) {
+            template = templates[$scope.w.type];
+        }
+        $scope.w.template = template;
+    })();
 }
 
 function SettingsCtrl ($scope, $rootScope, Settings) {

@@ -1,0 +1,56 @@
+<td data-title="" class="poster-container">
+  <div class="poster">
+    <img ng-src="{{ w.thumb }}" class="poster">
+    <div class="state">
+      <i class="glyphicon" ng-class="{stop: w.stopped > 0, pause: w.paused > 0, play: w.paused == 0 && w.stopped == 0}"></i>
+    </div>
+    <div class="progress-bar">
+      <div class="track" style="width: {{ w.progress }}%"></div>
+    </div>
+  </div>
+</td>
+
+
+<td data-title="" sortable="'time'" class="time-container">
+
+  <!-- started at -->
+  <h4>
+    {{ w.time | amDateFormat:"YYYY-MM-DD" }}
+  </h4>
+  <p class="card-details">
+    {{ w.time | amDateFormat:"HH:mm:ss" }}
+  </p>
+
+  <!-- stopped at -->
+  <h4 ng-hide="!w.stopped">
+    {{ w.stopped | amDateFormat:"YYYY-MM-DD" }}
+  </h4>
+  <p class="card-details" ng-hide="!w.stopped">
+    {{ w.stopped | amDateFormat:"HH:mm:ss" }}
+  </p>
+  <p class="card-details">
+    {{ w.timeWatched }} watched
+  </p>
+
+  <p class="card-details" ng-hide="!w.pausedCounter">
+    {{ w.timePaused }} paused
+  </p>
+</td>
+
+<td data-title="" sortable="'user'" class="user-container">
+  <h4>
+    {{ w.user }}
+  </h4>
+  <p class="card-details">
+    {{ w.platform }}
+  </p>
+  <p class="card-details" ng-hide="w.ipAddress == '0'">
+    {{ w.ipAddress }}
+  </p>
+</td>
+
+<td data-title="" sortable="'orig_title_ep'" class="title-container">
+  <h4>
+    {{ w.origTitle }}
+  </h4>
+</td>

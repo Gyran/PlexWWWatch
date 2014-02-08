@@ -22,13 +22,19 @@ class PlexWatchWatched implements JsonSerializable {
         $this->pausedCounter    = $dbrow["paused_counter"] * 1000;
         $this->ipAddress        = $dbrow["ip_address"];
 
-        $this->thumb = "";
         $xml = new SimpleXmlElement($dbrow["xml"]);
-        if ($xml["type"] == "movie") {
+
+        $this->type = "";
+        if (isset($xml["type"])) {
+            $this->type = $xml["type"]->__toString();
+        }
+
+        $this->thumb = "";
+        if ($this->type == "movie") {
             if (isset($xml["thumb"])) {
                 $this->thumb = $xml["thumb"]->__toString();
             }
-        } else if ($xml["type"] == "episode") {
+        } else if ($this->type == "episode") {
             if (isset($xml["parentThumb"])) {
                 $this->thumb = $xml["parentThumb"]->__toString();
             } else if (isset($xml["grandparentThumb"])) {
@@ -68,7 +74,8 @@ class PlexWatchWatched implements JsonSerializable {
         "origTitleEp", "user", "platform",
         "episode", "season", "stopped", "paused",
         "pausedCounter", "ipAddress", "thumb",
-        "duration", "episode", "season", "viewOffset"
+        "duration", "episode", "season", "viewOffset",
+        "type"
     );
 
     private $id;
