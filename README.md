@@ -14,6 +14,7 @@ Prerequisites
 Installation
 -------------------
 * Clone repo to desired location
+* Make sure PlexWWWatch/settings has write permissions for the web server (or just 777 for simplicity)
 * Visit http://host/PlexWWWatch/public
 * Visit settings page
 * Profit...
