@@ -74,6 +74,10 @@
                   <p class="card-details">
                     {{ timeWatched(w) }} watched
                   </p>
+
+                  <p class="card-details" ng-hide="!w.pausedCounter">
+                    {{ timePaused(w) }} paused
+                  </p>
                 </td>
 
                 <td data-title="" sortable="'user'" class="user-container">

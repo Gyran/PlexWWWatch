@@ -107,6 +107,10 @@ function HomeCtrl ($scope, $http, $filter, ngTableParams) {
         return moment.duration(ms).humanize();
     };
 
+    $scope.timePaused = function (w) {
+        return moment.duration(w.pausedCounter).humanize();
+    };
+
     $scope.thumb = function (w) {
         if (w.thumb === "") {
             return "img/poster.png";
