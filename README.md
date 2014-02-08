@@ -14,6 +14,6 @@ Prerequisites
 Installation
 -------------------
 * Clone repo to desired location
-* Visit http://host/PlexWWWatch
+* Visit http://host/PlexWWWatch/public
 * Visit settings page
 * Profit...
