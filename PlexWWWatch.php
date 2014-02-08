@@ -10,6 +10,8 @@ class PlexWWWatch {
             $this->_readSettings();
         }
 
+        $this->_vaildSettings($this->_settings);
+
         return $this->_settings;
     }
 
@@ -17,9 +19,8 @@ class PlexWWWatch {
         if ($this->_vaildSettings($settings)) {
             file_put_contents(__DIR__ . self::$SETTINGS_FILE, json_encode($settings));
             $this->_settings = $settings;
-            return true;
         }
-        return false;
+        return $settings;
     }
 
     public function plexWatch() {
@@ -50,8 +51,26 @@ class PlexWWWatch {
         return $settings;
     }
 
-    private function _vaildSettings($settings) {
-        return true;
+    private function _vaildSettings(&$settings) {
+        $settings->correct = true;
+        $settings->plexMediaServerHostCorrect = true;
+        $settings->dbPathCorrect = true;
+
+        if (!isset($settings->dbPath)
+            || !file_exists($settings->dbPath)) {
+
+            $settings->dbPathCorrect = false;
+            $settings->correct = false;
+        }
+
+        if (!isset($settings->plexMediaServerHost)
+            || $settings->plexMediaServerHost === "") {
+
+            $settings->plexMediaServerHostCorrect = false;
+            $settings->correct = false;
+        }
+
+        return $settings->correct;
     }
 
     private $_plexWatch = null;

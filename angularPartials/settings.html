@@ -8,10 +8,10 @@
     </div>
 
     <div>
-      <form class="preferences-form" ng-dirty>
+      <form class="preferences-form">
         <fieldset>
           <div class="preferences-group active">
-            <div class="control-group">
+            <div class="control-group" ng-class="{error: !settings.plexMediaServerHostCorrect}">
               <label class="control-label" for="input_dbPath">
                 Plex Media Server Host
               </label>
@@ -23,7 +23,7 @@
               </div>
             </div>
 
-            <div class="control-group">
+            <div class="control-group" ng-class="{error: !settings.dbPathCorrect}">
               <label class="control-label" for="input_dbPath">
                 Plex Watch database file
               </label>

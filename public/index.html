@@ -20,7 +20,10 @@
 
         <ul class="nav iconbar">
           <li>
-            <a class="navbar-glyphicon-btn settings-icon-btn" href="#/settings" rel="tooltip">
+            <a class="navbar-glyphicon-btn settings-icon-btn" href="#/settings">
+              <span class="text-error" ng-if="!settings.correct">
+                You have error in your settings
+              </span>
               <i class="glyphicon settings"></i>
             </a>
           </li>

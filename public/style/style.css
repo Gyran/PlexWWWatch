@@ -69,3 +69,6 @@ div[ng-include="templates.pagination"] {
     padding: 0 5px;
 }
 
+.text-error {
+    color: #f00;
+}

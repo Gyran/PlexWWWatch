@@ -8,8 +8,10 @@ angular.module("plex-wwwatch",
     ])
 .service("Settings", function ($http) {
     this.save = function (settings) {
-        $http.post("backend/settings.php", settings).success(function (data) {
+        var promise = $http.post("backend/settings.php", settings).success(function (data) {
+            return data;
         });
+        return promise;
     };
 
     this.get = function () {
@@ -17,11 +19,6 @@ angular.module("plex-wwwatch",
             if (data) {
                 return data;
             }
-            return {
-                dbPath: "/opt/plexWatch/plexWatch.db",
-                grouped: false,
-                plexMediaServerHost: "http://"
-            };
         });
         return promise;
     };
@@ -72,10 +69,12 @@ function HomeCtrl ($scope, $http, $filter, ngTableParams) {
      });
 
     $http({method: "GET", url: "backend/watched.php"}).success(function (data) {
-        watched = data;
-        $scope.tableParams.total(watched.length);
+        if (data) {
+            watched = data;
+            $scope.tableParams.total(watched.length);
 
-        $scope.tableParams.reload();
+            $scope.tableParams.reload();
+        }
     });
 
     $scope.pages = function () {
@@ -119,8 +118,10 @@ function HomeCtrl ($scope, $http, $filter, ngTableParams) {
     };
 }
 
-function SettingsCtrl ($scope, Settings) {
+function SettingsCtrl ($scope, $rootScope, Settings) {
     $scope.save = function (settings) {
-        Settings.save(settings);
+        Settings.save(settings).then(function (promise) {
+            $rootScope.settings = promise.data;
+        });
     };
 }
