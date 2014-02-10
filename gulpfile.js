@@ -17,7 +17,9 @@ var bowerScripts = [
     "./bower_components/angular-resource/angular-resource.min.js",
     "./bower_components/angular-route/angular-route.min.js",
     "./bower_components/moment/min/moment.min.js",
-    "./bower_components/ng-table/ng-table.js"
+    "./bower_components/angular-local-storage/angular-local-storage.min.js",
+    //"./bower_components/ng-table/ng-table.js",
+    "./bower_components/angular-base64/angular-base64.min.js"
 ];
 
 gulp.task("angular", function () {

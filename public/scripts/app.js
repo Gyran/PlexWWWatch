@@ -4,7 +4,10 @@ angular.module("plex-wwwatch",
         "ngResource",
         "angularMoment",
         "ngTable",
-        "PlexWWWatchPartials"
+        "PlexWWWatchPartials",
+        "base64",
+        "plex",
+        "LocalStorageModule"
     ])
 .service("Settings", function ($http) {
     this.save = function (settings) {
@@ -41,10 +44,14 @@ angular.module("plex-wwwatch",
         .otherwise({ redirectTo: "/home" })
         ;
 }])
-.run(function ($rootScope, Settings) {
+.run(function ($rootScope, Settings, localStorageService) {
     Settings.get().then(function (promise) {
         $rootScope.settings = promise.data;
     });
+
+    $rootScope.plex = {
+        token: localStorageService.get("plexToken")
+    };
 })
 ;
 
@@ -120,11 +127,23 @@ function WatchedRowCtrl ($scope) {
     })();
 
     (function () {
-        var thumb = "img/poster.png";
-        if ($scope.w.thumb !== "") {
-            thumb = $scope.settings.plexMediaServerHost + $scope.w.thumb;
-        }
-        $scope.w.thumb = thumb;
+        var setThumb = function () {
+            var thumb = "img/poster.png";
+            if ($scope.w.thumb !== "") {
+                thumb = $scope.settings.plexMediaServerHost + $scope.w.thumb;
+                if ($scope.plex.token) {
+                    thumb = thumb + "?X-Plex-Token=" + $scope.plex.token;
+                }
+            }
+            $scope.w.thumbsrc = thumb;
+        };
+
+        $scope.$watch("plex.token", function () {
+            setThumb();
+        });
+
+        setThumb();
+
     })();
 
     (function () {

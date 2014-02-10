@@ -7,8 +7,10 @@
     "components"
   ],
   "dependencies": {
-    "angular-resource": "~1.2.10",
-    "angular-route": "~1.2.10",
-    "angular-moment": "~0.6.1"
+    "angular-resource": "~1.2.12",
+    "angular-route": "~1.2.12",
+    "angular-moment": "~0.6.1",
+    "angular-base64": "~2.0",
+    "angular-local-storage": "*"
   }
 }

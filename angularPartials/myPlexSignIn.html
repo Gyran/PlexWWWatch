@@ -1,0 +1,44 @@
+<div class="row-fluid module">
+  <div class="well span12" ng-controller="PlexMyPlexSignInCtrl">
+    <div class="dashboard-well-header dashboard-well-header-secondary well-header">
+      <h3 ng-hide="plex.token">
+          Sign In to myPlex
+      </h3>
+      <h3 ng-hide="!plex.token">
+          Sign Out from myPlex
+      </h3>
+    </div>
+
+    <form class="row-fluid dashboard-login-form" ng-hide="plex.token" ng-submit="signin()">
+      <div class="text-error" ng-hide="!error">
+        {{ error }}
+      </div>
+
+      <div class="control-group">
+        <input type="text" class="input-dark span12" placeholder="username or email" ng-model="username">
+      </div>
+
+      <div class="control-group">
+        <input type="password" class="input-dark span12" placeholder="password" ng-model="password">
+      </div>
+
+      <div class="control-group">
+        <button type="submit" class="btn btn-primary pull-right">Sign In</button>
+
+        <label>
+          <input type="checkbox" ng-model="remember"> &nbsp;Remember Me
+        </label>
+      </div>
+      <p class="help-block">
+          If you have problems with displaying posters, sign in to myPlex. Your credentials will not be stored!
+        </p>
+    </form>
+
+    <form class="row-fluid dashboard-login-form" ng-hide="!plex.token" ng-submit="signout()">
+      <div class="control-group">
+        <button type="submit" class="btn btn-primary pull-right">Sign Out</button>
+      </div>
+    </form>
+
+  </div>
+</div>
