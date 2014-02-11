@@ -1,5 +1,7 @@
 <?php
 require_once("PlexWatchWatched.php");
+require_once("PlexWatchWatchedIterator.php");
+require_once("PlexWatchUser.php");
 
 class PlexWatch {
     function __construct($dbpath, $grouped = false) {
@@ -8,16 +10,29 @@ class PlexWatch {
         $this->_grouped = $grouped;
     }
 
-    public function query() {
+    public function watched() {
+        return iterator_to_array($this->_watchedIterator());
+    }
+
+    public function users() {
+        $it = $this->_watchedIterator();
+
+        foreach ($it as $watched) {
+            $username = $watched->user;
+            if (!isset($users[$username])) {
+                $users[$username] = new PlexWatchUser($username);
+            }
+            $users[$username]->addWatched($watched);
+        }
+
+        return $users;
+    }
+
+    private function _watchedIterator() {
         $statement = $this->_dbh->prepare("SELECT * FROM " . $this->_getWatchedTable() . " ORDER BY time DESC");
         $result = $statement->execute();
 
-        $watched = array();
-        while($res = $result->fetchArray(SQLITE3_ASSOC)) {
-            $watched[] = new PlexWatchWatched($res);
-        }
-
-        return $watched;
+        return new PlexWatchWatchedIterator($result);
     }
 
     private function _getWatchedTable () {

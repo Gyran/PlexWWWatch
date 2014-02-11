@@ -21,9 +21,9 @@ class PlexWatchWatched implements JsonSerializable {
         $this->paused           = $dbrow["paused"] * 1000;
         $this->pausedCounter    = $dbrow["paused_counter"] * 1000;
         $this->ipAddress        = $dbrow["ip_address"];
+        $this->xml              = $dbrow["xml"];
 
-        $xml = new SimpleXmlElement($dbrow["xml"]);
-
+        $xml = new SimpleXmlElement($this->xml);
         $this->type = "";
         if (isset($xml["type"])) {
             $this->type = $xml["type"]->__toString();
@@ -60,7 +60,6 @@ class PlexWatchWatched implements JsonSerializable {
     }
 
     public function jsonSerialize() {
-
         $ret = array();
         foreach ($this->jsonFields as $field) {
             $ret[$field] = $this->$field;
@@ -79,13 +78,13 @@ class PlexWatchWatched implements JsonSerializable {
     );
 
     private $id;
-    private $session_id;
+    private $sessionId;
     private $time;
     private $user;
     private $platform;
     private $title;
-    private $orig_title;
-    private $orig_title_ep;
+    private $origTitle;
+    private $origTitleEp;
     private $episode;
     private $season;
     private $year;
@@ -95,9 +94,9 @@ class PlexWatchWatched implements JsonSerializable {
     private $notified;
     private $stopped;
     private $paused;
-    private $paused_counter;
+    private $pausedCounter;
     private $xml;
-    private $ip_address;
+    private $ipAddress;
 }
 
 ?>
