@@ -21,42 +21,17 @@ class PlexWatchWatched implements JsonSerializable {
         $this->paused           = $dbrow["paused"] * 1000;
         $this->pausedCounter    = $dbrow["paused_counter"] * 1000;
         $this->ipAddress        = $dbrow["ip_address"];
-        $this->xml              = $dbrow["xml"];
 
-        $xml = new SimpleXmlElement($this->xml);
-        $this->type = "";
-        if (isset($xml["type"])) {
-            $this->type = $xml["type"]->__toString();
-        }
-
-        $this->thumb = "";
-        if ($this->type == "movie") {
-            if (isset($xml["thumb"])) {
-                $this->thumb = $xml["thumb"]->__toString();
-            }
-        } else if ($this->type == "episode") {
-            if (isset($xml["parentThumb"])) {
-                $this->thumb = $xml["parentThumb"]->__toString();
-            } else if (isset($xml["grandparentThumb"])) {
-                $this->thumb = $xml["grandparentThumb"]->__toString();
-            } else if (isset($xml["thumb"])) {
-                $this->thumb = $xml["thumb"]->__toString();
-            }
-        }
-        $this->duration = 0;
-        if (isset($xml["duration"])) {
-            $this->duration = $xml["duration"]->__toString();
-        }
-
-        $this->viewOffset = 0;
-        if (isset($xml["viewOffset"])) {
-            $this->viewOffset = $xml["viewOffset"]->__toString();
-        }
-
+        $this->_xml             = $dbrow["xml"];
     }
 
-    public function __get($var) {
-        return $this->$var;
+    public function __get($p) {
+        $m = "get_" . $p;
+        if (method_exists($this, $m)) {
+            return $this->$m();
+        }
+
+        user_error("Undefined property ". $p);
     }
 
     public function jsonSerialize() {
@@ -68,6 +43,53 @@ class PlexWatchWatched implements JsonSerializable {
         return $ret;
     }
 
+    private function get_xml() {
+        return $this->xml = new SimpleXmlElement($this->_xml);
+    }
+
+    private function get_type() {
+        $type = "";
+        if (isset($this->xml["type"])) {
+            $type = $this->xml["type"]->__toString();
+        }
+
+        return $this->type = $type;
+    }
+
+    private function get_thumb() {
+        $thumb = "";
+        if ($this->type == "movie") {
+            if (isset($this->xml["thumb"])) {
+                $thumb = $this->xml["thumb"]->__toString();
+            }
+        } else if ($this->type == "episode") {
+            if (isset($this->xml["parentThumb"])) {
+                $thumb = $this->xml["parentThumb"]->__toString();
+            } else if (isset($this->xml["grandparentThumb"])) {
+                $thumb = $this->xml["grandparentThumb"]->__toString();
+            } else if (isset($xml["thumb"])) {
+                $thumb = $this->xml["thumb"]->__toString();
+            }
+        }
+        return $this->thumb = $thumb;
+    }
+
+    private function get_duration() {
+        $duration = 0;
+        if (isset($this->xml["duration"])) {
+            $duration = $this->xml["duration"]->__toString();
+        }
+        return $this->duration = $duration;
+    }
+
+    private function get_viewOffset() {
+        $viewOffset = 0;
+        if (isset($this->xml["viewOffset"])) {
+            $viewOffset = $this->xml["viewOffset"]->__toString();
+        }
+        return $this->viewOffset = $viewOffset;
+    }
+
     private $jsonFields = array(
         "id", "time", "title", "origTitle",
         "origTitleEp", "user", "platform",
@@ -77,26 +99,27 @@ class PlexWatchWatched implements JsonSerializable {
         "type"
     );
 
-    private $id;
-    private $sessionId;
-    private $time;
-    private $user;
-    private $platform;
-    private $title;
-    private $origTitle;
-    private $origTitleEp;
-    private $episode;
-    private $season;
-    private $year;
-    private $rating;
-    private $genre;
-    private $summary;
-    private $notified;
-    private $stopped;
-    private $paused;
-    private $pausedCounter;
-    private $xml;
-    private $ipAddress;
+    public $id;
+    public $sessionId;
+    public $time;
+    public $user;
+    public $platform;
+    public $title;
+    public $origTitle;
+    public $origTitleEp;
+    public $episode;
+    public $season;
+    public $year;
+    public $rating;
+    public $genre;
+    public $summary;
+    public $notified;
+    public $stopped;
+    public $paused;
+    public $pausedCounter;
+    public $ipAddress;
+
+    private $_xml;
 }
 
 ?>
