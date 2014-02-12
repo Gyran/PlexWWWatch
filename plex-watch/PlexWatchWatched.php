@@ -90,13 +90,36 @@ class PlexWatchWatched implements JsonSerializable {
         return $this->viewOffset = $viewOffset;
     }
 
+    private function get_timeWatched() {
+        $start = $this->time;
+        $stop = 0;
+
+        if ($this->stopped > 0) {
+            $stop = $this->stopped;
+        } else if ($this->paused > 0) {
+            $stop = $this->paused;
+        } else {
+            $stop = time() * 1000;
+        }
+
+        return $this->timeWatched = $stop - $start - $this->pausedCounter;
+    }
+
+    private function get_progress() {
+        $progress = ($this->viewOffset / $this->duration) * 100;
+        if ($progress > 90) {
+            $progress = 100;
+        }
+        return $this->progress = $progress;
+    }
+
     private $jsonFields = array(
         "id", "time", "title", "origTitle",
         "origTitleEp", "user", "platform",
         "episode", "season", "stopped", "paused",
         "pausedCounter", "ipAddress", "thumb",
         "duration", "episode", "season", "viewOffset",
-        "type"
+        "type", "viewOffset", "timeWatched", "duration"
     );
 
     public $id;

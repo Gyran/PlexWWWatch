@@ -7,7 +7,8 @@ angular.module("plex-wwwatch",
         "PlexWWWatchPartials",
         "base64",
         "plex",
-        "LocalStorageModule"
+        "LocalStorageModule",
+        "ngPlexWatch"
     ])
 .service("Settings", function ($http) {
     this.save = function (settings) {
@@ -41,6 +42,10 @@ angular.module("plex-wwwatch",
                 }
             }
         })
+        .when("/users", {
+            controller: "UsersCtrl",
+            templateUrl: "partials/users.html"
+        })
         .otherwise({ redirectTo: "/home" })
         ;
 }])
@@ -59,7 +64,7 @@ function HomeCtrl ($scope, $http, $filter, ngTableParams) {
 
 }
 
-function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams) {
+function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams, PlexWatch) {
     var watched = [];
 
     $scope.tableParams = new ngTableParams({
@@ -74,18 +79,14 @@ function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams) {
             var orderedData = params.sorting() ?
                 $filter("orderBy")(watched, params.orderBy()) :
                 watched;
-
             $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
         }
      });
 
-    $http({method: "GET", url: "backend/watched.php"}).success(function (data) {
-        if (data) {
-            watched = data;
-            $scope.tableParams.total(watched.length);
-
-            $scope.tableParams.reload();
-        }
+    PlexWatch.Watched.query({}, function (data) {
+        watched = data;
+        $scope.tableParams.total(watched.length);
+        $scope.tableParams.reload();
     });
 
     $scope.pages = function () {
@@ -96,6 +97,7 @@ function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams) {
 
 
 function WatchedRowCtrl ($scope) {
+    /*
     (function () {
         var percent = ($scope.w.viewOffset / $scope.w.duration) * 100;
         if (percent > 90) {
@@ -122,9 +124,11 @@ function WatchedRowCtrl ($scope) {
         $scope.w.timeWatched = moment.duration(ms).humanize();
     }());
 
+
     (function () {
         $scope.w.timePaused = moment.duration($scope.w.pausedCounter).humanize();
     })();
+    */
 
     (function () {
         var setThumb = function () {
@@ -158,6 +162,10 @@ function WatchedRowCtrl ($scope) {
         }
         $scope.w.template = template;
     })();
+
+    $scope.duration = function (ms) {
+        return moment.duration(ms).humanize();
+    };
 }
 
 function SettingsCtrl ($scope, $rootScope, Settings) {
@@ -166,4 +174,17 @@ function SettingsCtrl ($scope, $rootScope, Settings) {
             $rootScope.settings = promise.data;
         });
     };
+}
+
+function UsersCtrl ($scope, PlexWatch) {
+    $scope.users = PlexWatch.Users.query();
+}
+
+function UserCtrl ($scope) {
+    (function () {
+        var thumb = "img/userThumb.png";
+        if ($scope.user.thumb === "") {
+            $scope.user.thumb = thumb;
+        }
+    })();
 }

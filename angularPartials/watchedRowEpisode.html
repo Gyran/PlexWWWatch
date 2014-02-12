@@ -29,11 +29,11 @@
     {{ w.stopped | amDateFormat:"HH:mm:ss" }}
   </p>
   <p class="card-details">
-    {{ w.timeWatched }} watched
+    {{ duration(w.timeWatched) }} watched
   </p>
 
   <p class="card-details" ng-hide="!w.pausedCounter">
-    {{ w.timePaused }} paused
+    {{ duration(w.pausedCounter) }} paused
   </p>
 </td>
 
