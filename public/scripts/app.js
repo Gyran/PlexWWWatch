@@ -142,8 +142,35 @@ function SettingsCtrl ($scope, $rootScope, Settings) {
     };
 }
 
-function UsersCtrl ($scope, PlexWatch) {
-    $scope.users = PlexWatch.Users.query();
+function UsersCtrl ($scope, PlexWatch, ngTableParams, $filter) {
+    var users = [];
+
+    $scope.tableParams = new ngTableParams({
+        page: 1,
+        count: 25,
+        sorting: {
+            name: "asc"
+        }
+    }, {
+        total: 0,
+        getData: function($defer, params) {
+            var orderedData = params.sorting() ?
+                $filter("orderBy")(users, params.orderBy()) :
+                users;
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+     });
+
+    PlexWatch.Users.query({}, function (data) {
+        users = data;
+        $scope.tableParams.total(users.length);
+        $scope.tableParams.reload();
+    });
+
+    $scope.pages = function () {
+        return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
+    };
+
 }
 
 function UserCtrl ($scope) {

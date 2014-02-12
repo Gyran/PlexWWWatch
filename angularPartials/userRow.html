@@ -1,0 +1,21 @@
+<td class="thumb-cell">
+    <img ng-src="{{ user.thumb }}" class="user-thumb">
+</td>
+<td data-title="'Username'">
+    {{user.name}}
+</td>
+<td data-title="'Number of platforms'">
+    {{user.platforms.length}}
+</td>
+<td>
+    {{ user.episodesWatched }}
+</td>
+<td>
+    {{ user.moviesWatched }}
+</td>
+<td>
+    {{ user.timeWatched | duration }}
+</td>
+<td>
+    <span am-time-ago="user.lastWatchedAt"></span>
+</td>

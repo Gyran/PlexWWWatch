@@ -93,3 +93,51 @@ div[ng-include="templates.pagination"] {
 .text-error {
     color: #f00;
 }
+
+/* user table */
+
+.users {
+    /*width: 100%;*/
+}
+
+.users th {
+    text-align: left;
+    padding: 0 5px;
+}
+
+.users td {
+    padding: 5px;
+}
+
+.users .thumb-cell {
+    width: 50px;
+}
+
+.users .thumb-cell img {
+    width: 40px;
+    height: 40px;
+}
+
+.users .name-cell {
+    width: 20%;
+}
+
+.users .platforms-cell {
+    width: 14%;
+}
+
+.users .episodes-cell {
+    width: 5%;
+}
+
+.users .movies-cell {
+    width: 5%;
+}
+
+.users .totalTime-cell {
+    width: 25%;
+}
+
+.users .lastWatchedAt-cell {
+    width: 25%;
+}

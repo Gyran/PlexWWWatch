@@ -26,7 +26,7 @@ class PlexWatch {
             $users[$username]->addWatched($watched);
         }
 
-        return $users;
+        return array_values($users);
     }
 
     private function _watchedIterator() {

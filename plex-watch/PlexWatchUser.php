@@ -6,11 +6,14 @@ class PlexWatchUser implements JsonSerializable {
         $this->platforms = array();
         $this->id = -1;
         $this->thumb = "";
-
+        $this->timeWatched = 0;
+        $this->episodesWatched = 0;
+        $this->moviesWatched = 0;
+        $this->lastWatchedAt = 0;
     }
 
     public function addWatched($watched) {
-        $xml = new SimpleXmlElement($watched->xml);
+        $xml = $watched->xml;
         if ($this->id < 0 && isset($xml->User["id"])) {
             $this->id = $xml->User["id"]->__toString();
         }
@@ -19,13 +22,21 @@ class PlexWatchUser implements JsonSerializable {
             $this->thumb = $xml->User["thumb"]->__toString();
         }
 
-        $this->_addPlatform($watched->platform);
-    }
-
-    public function _addPlatform($platfrom) {
-        if (!in_array($platfrom, $this->platforms)) {
-            $this->platforms[] = $platfrom;
+        if ($this->lastWatchedAt < $watched->time) {
+            $this->lastWatchedAt = $watched->time;
         }
+
+        switch ($watched->type) {
+            case "movie":
+                $this->moviesWatched = $this->moviesWatched + 1;
+                break;
+            case "episode":
+                $this->episodesWatched = $this->episodesWatched + 1;
+                break;
+        }
+
+        $this->timeWatched = $this->timeWatched + $watched->timeWatched;
+        $this->_addPlatform($watched->platform);
     }
 
     public function jsonSerialize() {
@@ -37,13 +48,23 @@ class PlexWatchUser implements JsonSerializable {
         return $ret;
     }
 
+    private function _addPlatform($platfrom) {
+        if (!in_array($platfrom, $this->platforms)) {
+            $this->platforms[] = $platfrom;
+        }
+    }
+
     private $jsonFields = array(
-        "id", "name", "platforms", "thumb"
+        "id", "name", "platforms", "thumb", "timeWatched",
+        "moviesWatched", "episodesWatched", "lastWatchedAt"
     );
 
-    private $id;
-    private $name;
-    private $platforms;
-    private $thumb;
+    public $id;
+    public $name;
+    public $platforms;
+    public $thumb;
+    public $timeWatched;
+    public $moviesWatched;
+    public $episodesWatched;
 }
 ?>
