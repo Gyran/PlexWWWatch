@@ -49,6 +49,11 @@ angular.module("plex-wwwatch",
         .otherwise({ redirectTo: "/home" })
         ;
 }])
+.filter("duration", function () {
+    return function (input) {
+        return moment.duration(input).humanize();
+    };
+})
 .run(function ($rootScope, Settings, localStorageService) {
     Settings.get().then(function (promise) {
         $rootScope.settings = promise.data;
@@ -60,7 +65,7 @@ angular.module("plex-wwwatch",
 })
 ;
 
-function HomeCtrl ($scope, $http, $filter, ngTableParams) {
+function HomeCtrl ($scope) {
 
 }
 
@@ -94,42 +99,7 @@ function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams, PlexWatch) 
     };
 }
 
-
-
 function WatchedRowCtrl ($scope) {
-    /*
-    (function () {
-        var percent = ($scope.w.viewOffset / $scope.w.duration) * 100;
-        if (percent > 90) {
-            $scope.w.progress = 100    ;
-        } else {
-            $scope.w.progress = percent;
-        }
-    }());
-
-    (function () {
-        var start_time = $scope.w.time;
-        var stop_time = 0;
-
-        if ($scope.w.stopped > 0) {
-            stop_time = $scope.w.stopped;
-        } else if ($scope.w.paused > 0) {
-            stop_time = $scope.w.paused;
-        } else {
-            stop_time = moment().valueOf();
-        }
-
-        var ms = stop_time - start_time - $scope.w.pausedCounter;
-
-        $scope.w.timeWatched = moment.duration(ms).humanize();
-    }());
-
-
-    (function () {
-        $scope.w.timePaused = moment.duration($scope.w.pausedCounter).humanize();
-    })();
-    */
-
     (function () {
         var setThumb = function () {
             var thumb = "img/poster.png";
@@ -162,10 +132,6 @@ function WatchedRowCtrl ($scope) {
         }
         $scope.w.template = template;
     })();
-
-    $scope.duration = function (ms) {
-        return moment.duration(ms).humanize();
-    };
 }
 
 function SettingsCtrl ($scope, $rootScope, Settings) {
