@@ -149,11 +149,6 @@ angular.module("plex-wwwatch",
         .otherwise({ redirectTo: "/home" })
         ;
 }])
-.filter("duration", function () {
-    return function (input) {
-        return moment.duration(input).humanize();
-    };
-})
 .run(function ($rootScope, Settings, localStorageService) {
     Settings.get().then(function (promise) {
         $rootScope.settings = promise.data;
@@ -164,6 +159,8 @@ angular.module("plex-wwwatch",
     };
 })
 ;
+
+
 
 function HomeCtrl ($scope) {
 
@@ -281,6 +278,14 @@ function UserCtrl ($scope) {
         }
     })();
 }
+
+angular.module("plex-wwwatch")
+.filter("duration", function () {
+    return function (input) {
+        return moment.duration(input).humanize();
+    };
+})
+;
 
 (function(angular, factory) {
     'use strict';
