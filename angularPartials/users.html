@@ -1,38 +1,22 @@
-<div class="row-fluid module">
-  <div class="well span12">
-    <div class="dashboard-well-header well-header">
-      <ul class="well-header-actions">
-        <li>
-          <div ng-if="tableParams.settings().counts.length" class="btn-group btn-group-inverse">
-            <button ng-repeat="count in tableParams.settings().counts" type="button" ng-class="{'active':tableParams.count()==count}" ng-click="tableParams.count(count)" class="btn btn-inverse">
-              <span ng-bind="count" class="ng-binding"></span>
-            </button>
-          </div>
-        </li>
-
-        <li class="well-header-pagination">
-          <span class="page">
-            {{ tableParams.page() }}
-          </span> of <span class="pages">{{ pages() }}</span>
-        </li>
-        <li>
-          <div class="btn-group btn-group-inverse">
-            <button type="button" class="previous-btn btn btn-inverse btn-icon"
-              ng-disabled="tableParams.page() <= 1"
-              ng-click="tableParams.page(tableParams.page() - 1)">
-              <i class="glyphicon chevron-left"></i>
-            </button>
-            <button type="button" class="next-btn btn btn-inverse btn-icon"
-              ng-disabled="tableParams.page() >= pages()"
-              ng-click="tableParams.page(tableParams.page() + 1)">
-              <i class="glyphicon chevron-right"></i>
-            </button>
-          </div>
-        </li>
-      </ul>
-
-      <h3>Users</h3>
-    </div>
+<div class="priorities-container">
+  <div class="dashboard-container">
+    <ul class="nav nav-header nav-dashboard pull-right">
+      <li>
+        <a class="previous-btn btn-gray"
+          ng-class="{'disabled': tableParams.page() <= 1}"
+          ng-click="tableParams.page(max(1, tableParams.page() - 1))">
+          <i class="glyphicon chevron-left"></i>
+        </a>
+      </li>
+      <li>
+        <a class="next-btn btn-gray"
+          ng-class="{'disabled': tableParams.page() >= pages()}"
+          ng-click="tableParams.page(min(pages(), tableParams.page() + 1))">
+          <i class="glyphicon chevron-right"></i>
+        </a>
+      </li>
+    </ul>
+    <h3>Users</h3>
 
     <table ng-table="tableParams" class="users">
       <thead>
@@ -52,7 +36,7 @@
             }"
             ng-click="tableParams.sorting({'platforms.length' : tableParams.isSortBy('platforms.length', 'asc') ? 'desc' : 'asc'})"
             class="sortable platforms-cell">
-            Platforms
+            Devices
           </th>
           <th ng-class="{
               'sort-asc': tableParams.isSortBy('episodesWatched', 'asc'),
@@ -96,3 +80,4 @@
     </table>
   </div>
 </div>
+

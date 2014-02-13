@@ -1,21 +1,23 @@
-<td class="thumb-cell">
+<td class="thumb-container">
     <img ng-src="{{ user.thumb }}" class="user-thumb">
 </td>
-<td data-title="'Username'">
+<td class="name-container">
+  <a href="#/users/{{user.name}}" class="btn-gray">
     {{user.name}}
+  </a>
 </td>
-<td data-title="'Number of platforms'">
-    {{user.platforms.length}}
+<td class="devices-container">
+  {{user.platforms.length}}
+</td>
+<td class="numwatched-container">
+  {{ user.episodesWatched }}
+</td>
+<td class="numwatched-container">
+  {{ user.moviesWatched }}
+</td>
+<td class="timeWatched-container">
+  {{ user.timeWatched | duration }}
 </td>
 <td>
-    {{ user.episodesWatched }}
-</td>
-<td>
-    {{ user.moviesWatched }}
-</td>
-<td>
-    {{ user.timeWatched | duration }}
-</td>
-<td>
-    <span am-time-ago="user.lastWatchedAt"></span>
+  <span am-time-ago="user.lastWatchedAt"></span>
 </td>

@@ -75,3 +75,36 @@ div[ng-include="templates.pagination"] {
     background-color: #ff9d00;
     height: 5px;
 }
+
+.users {
+    width: 100%;
+}
+
+.users th {
+    text-align: left;
+}
+
+.users .thumb-container {
+    width: 50px;
+}
+
+.users .user-thumb {
+    width: 40px;
+    height: 40px;
+}
+
+.users .name-container {
+    width: 20%;
+}
+
+.users .devices-container {
+    width: 10%;
+}
+
+.users .numwatched-container {
+    width: 5%;
+}
+
+.users .timeWatched-container {
+    width: 25%;
+}
