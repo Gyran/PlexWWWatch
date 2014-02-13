@@ -2,13 +2,44 @@ div[ng-include="templates.pagination"] {
     display: none;
 }
 
-.ng-table .sortable {
-    cursor: pointer;
+.watched {
+    width: 100%;
 }
 
-.poster {
-    position: relative;
+.watched td {
+    vertical-align: top;
+}
+
+.watched .poster-container {
+    width: 110px;
+}
+
+.watched .poster {
     height: 145px;
+    width: 100px;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.watched .time-container {
+    width: 15%;
+}
+
+.watched .user-container {
+    width: 20%;
+}
+
+.watched .title-container {
+    /*width: 40%;*/
+}
+
+.watched .title-container .media-title {
+    max-width: 90%;
+}
+
+.watched .media-details-list-item {
+    height: auto;
 }
 
 .poster .state {
@@ -43,78 +74,4 @@ div[ng-include="templates.pagination"] {
 .progress-bar .track {
     background-color: #ff9d00;
     height: 5px;
-}
-
-/* watched table */
-.watched td {
-    padding: 0 5px;
-    vertical-align: top;
-}
-
-.watched .poster-container {
-    width: 100px;
-    padding: 0;
-}
-
-.watched .time-container {
-    width: 20%;
-}
-
-.watched .user-container {
-    width: 20%;
-}
-
-.watched .title-container {
-    width: 60%;
-}
-
-.watched .text-error {
-    color: #f00;
-}
-
-/* user table */
-.users th {
-    text-align: left;
-    padding: 0 5px;
-}
-
-.users td {
-    padding: 5px;
-}
-
-.users .thumb-cell {
-    width: 50px;
-}
-
-.users .user-thumb {
-    width: 30px;
-    height: 30px;
-}
-
-.users .name-cell {
-    width: 20%;
-}
-
-.users .platforms-cell {
-    width: 14%;
-}
-
-.users .episodes-cell {
-    width: 5%;
-}
-
-.users .movies-cell {
-    width: 5%;
-}
-
-.users .totalTime-cell {
-    width: 25%;
-}
-
-.users .lastWatchedAt-cell {
-    width: 25%;
-}
-
-.user-thumb {
-    height: 70px;
 }

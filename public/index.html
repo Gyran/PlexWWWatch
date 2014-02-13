@@ -7,27 +7,27 @@
     <link href="build/style.css" rel="stylesheet">
   </head>
   <body>
-    <div class="application">
-      <div class="navbar navbar-fixed-top">
+    <div class="application show-nav-bar">
+      <div class="nav-bar">
 
-        <ul class="nav breadcrumbbar">
+        <ul class="nav nav-bar-nav">
           <li>
-            <a class="navbar-glyphicon-btn home-icon-btn" href="#/home">
+            <a href="#/home">
               <i class="glyphicon home"></i>
             </a>
           </li>
 
           <li>
-            <a class="navbar-glyphicon-btn home-icon-btn" href="#/users">
+            <a href="#/users">
               <i class="glyphicon group"></i>
             </a>
           </li>
 
         </ul>
 
-        <ul class="nav iconbar">
+        <ul class="nav nav-bar-nav nav-bar-right">
           <li>
-            <a class="navbar-glyphicon-btn settings-icon-btn" href="#/settings">
+            <a href="#/settings">
               <span class="text-error" ng-if="!settings.correct">
                 You have error in your settings
               </span>
@@ -38,17 +38,7 @@
       </div>
 
       <div class="scroll-container minimal-scrollbar">
-        <div class="dashboard-container">
-          <div class="row show-sidebar fluid">
-            <div class="column-main">
-              <div ng-view></div>
-            </div>
-            <div class="column-sidebar">
-              <ng-include src="'partials/myPlexSignIn.html'"></ng-include>
-            </div>
-          </div>
-        </div>
-      </div>
+        <div ng-view></div>
     </div>
   </body>
 </html>

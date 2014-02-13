@@ -120,7 +120,7 @@ class PlexWatchWatched implements JsonSerializable {
         "pausedCounter", "ipAddress", "thumb",
         "duration", "episode", "season", "viewOffset",
         "type", "viewOffset", "timeWatched", "duration",
-        "progress"
+        "progress", "year"
     );
 
     public $id;

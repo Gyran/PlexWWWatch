@@ -30,6 +30,9 @@ function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams, PlexWatch) 
     $scope.pages = function () {
         return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
     };
+
+    $scope.min = Math.min;
+    $scope.max = Math.max;
 }
 
 function WatchedRowCtrl ($scope) {

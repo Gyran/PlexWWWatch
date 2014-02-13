@@ -10,47 +10,48 @@
   </div>
 </td>
 
-
-<td data-title="" sortable="'time'" class="time-container">
-
+<td data-title="" sortable="'time'" class="time-container poster-item">
   <!-- started at -->
-  <h4>
+  <div class="media-title media-heading">
     {{ w.time | amDateFormat:"YYYY-MM-DD" }}
-  </h4>
-  <p class="card-details">
+  </div>
+  <div class="media-subtitle media-heading secondary">
     {{ w.time | amDateFormat:"HH:mm:ss" }}
-  </p>
+  </div>
 
   <!-- stopped at -->
-  <h4 ng-hide="!w.stopped">
+  <div ng-hide="!w.stopped" class="media-title media-heading">
     {{ w.stopped | amDateFormat:"YYYY-MM-DD" }}
-  </h4>
-  <p class="card-details" ng-hide="!w.stopped">
+  </div>
+  <div ng-hide="!w.stopped" class="media-title media-heading secondary">
     {{ w.stopped | amDateFormat:"HH:mm:ss" }}
-  </p>
-  <p class="card-details">
-    {{ duration(w.timeWatched) }} watched
-  </p>
+  </div>
+  <div class="media-title media-heading">
+    {{ w.timeWatched | duration }} watched
+  </div>
 
-  <p class="card-details" ng-hide="!w.pausedCounter">
+  <div class="media-title media-heading" ng-hide="!w.pausedCounter">
     {{ w.pausedCounter | duration }} paused
-  </p>
+  </div>
 </td>
 
-<td data-title="" sortable="'user'" class="user-container">
-  <h4>
+<td data-title="" sortable="'user'" class="user-container poster-item">
+  <div class="media-title media-heading">
     {{ w.user }}
-  </h4>
-  <p class="card-details">
+  </div>
+  <div class="media-title media-heading secondary">
     {{ w.platform }}
-  </p>
-  <p class="card-details" ng-hide="w.ipAddress == '0'">
+  </div>
+  <p class="media-title media-heading secondary" ng-hide="w.ipAddress == '0'">
     {{ w.ipAddress }}
   </p>
 </td>
 
-<td data-title="" sortable="'orig_title_ep'" class="title-container">
-  <h4>
+<td data-title="" sortable="'orig_title_ep'" class="title-container media-details-list-item">
+  <span class="media-title media-heading">
     {{ w.origTitle }}
-  </h4>
+  </span>
+  <span class="media-subtitle media-heading secondary">
+    {{ w.year }}
+  </span>
 </td>
