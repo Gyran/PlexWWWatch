@@ -86,9 +86,9 @@ div[ng-include="templates.pagination"] {
     width: 50px;
 }
 
-.users .thumb-cell img {
-    width: 40px;
-    height: 40px;
+.users .user-thumb {
+    width: 30px;
+    height: 30px;
 }
 
 .users .name-cell {
@@ -113,4 +113,8 @@ div[ng-include="templates.pagination"] {
 
 .users .lastWatchedAt-cell {
     width: 25%;
+}
+
+.user-thumb {
+    height: 70px;
 }

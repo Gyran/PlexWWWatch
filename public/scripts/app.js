@@ -46,6 +46,10 @@ angular.module("plex-wwwatch",
             controller: "UsersCtrl",
             templateUrl: "partials/users.html"
         })
+        .when("/users/:user", {
+            controller: "UserCtrl",
+            templateUrl: "partials/user.html"
+        })
         .otherwise({ redirectTo: "/home" })
         ;
 }])

@@ -6,7 +6,7 @@ try {
     $plexWWWatch = new PlexWWWatch();
     if (isset($_GET["user"])) {
         $username = $_GET["user"];
-        echo json_encode($plexWWWatch->plexWatch()->user($username));
+        echo json_encode($plexWWWatch->plexWatch()->user($username), JSON_PRETTY_PRINT);
     } else {
         echo json_encode($plexWWWatch->plexWatch()->users());
     }

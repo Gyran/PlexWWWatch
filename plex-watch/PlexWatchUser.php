@@ -36,7 +36,7 @@ class PlexWatchUser implements JsonSerializable {
         }
 
         $this->timeWatched = $this->timeWatched + $watched->timeWatched;
-        $this->_addPlatform($watched->platform);
+        $this->_addPlatform($watched);
     }
 
     public function jsonSerialize() {
@@ -48,13 +48,14 @@ class PlexWatchUser implements JsonSerializable {
         return $ret;
     }
 
-    private function _addPlatform($platfrom) {
+    protected function _addPlatform($watched) {
+        $platfrom = $watched->platform;
         if (!in_array($platfrom, $this->platforms)) {
             $this->platforms[] = $platfrom;
         }
     }
 
-    private $jsonFields = array(
+    protected $jsonFields = array(
         "id", "name", "platforms", "thumb", "timeWatched",
         "moviesWatched", "episodesWatched", "lastWatchedAt"
     );

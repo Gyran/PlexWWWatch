@@ -115,8 +115,17 @@ function UserRowCtrl ($scope) {
 
 function UserCtrl ($scope, $routeParams, PlexWatch) {
     $scope.user = {
-        watched: []
+        watched: [],
+        thumb: "img/userThumb.png"
     };
+
+    (function () {
+        var thumb = "img/userThumb.png";
+        if ($scope.user.thumb === "") {
+            $scope.user.thumb = thumb;
+        }
+    })();
+
     PlexWatch.Users.get({user: $routeParams.user}, function (data) {
         $scope.user = data;
     });

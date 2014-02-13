@@ -2,6 +2,7 @@
 require_once("PlexWatchWatched.php");
 require_once("PlexWatchWatchedIterator.php");
 require_once("PlexWatchUser.php");
+require_once("PlexWatchUserDetails.php");
 
 class PlexWatch {
     function __construct($dbpath, $grouped = false) {
@@ -33,7 +34,7 @@ class PlexWatch {
         $config = [];
         $config["user"] = $username;
 
-        $user = new PlexWatchUser($username);
+        $user = new PlexWatchUserDetails($username);
 
         $it = $this->_watchedIterator($config);
         foreach ($it as $watched) {
