@@ -38,7 +38,17 @@
       </div>
 
       <div class="scroll-container minimal-scrollbar">
-        <div ng-view></div>
+        <div class="dashboard-container">
+          <div class="row show-sidebar fluid">
+            <div class="column-main">
+              <div ng-view></div>
+            </div>
+            <div class="column-sidebar">
+              <ng-include src="'partials/myPlexSignIn.html'"></ng-include>
+            </div>
+          </div>
+        </div>
       </div>
-    </body>
+    </div>
+  </body>
 </html>

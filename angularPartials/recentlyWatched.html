@@ -1,4 +1,4 @@
-<div class="row-fluid module" ng-controller="RecentlyWatchedCtrl">
+<div class="row-fluid module">
   <div class="well span12">
     <div class="dashboard-well-header well-header">
       <ul class="well-header-actions">
@@ -34,7 +34,7 @@
       <h3>Recently watched</h3>
     </div>
 
-    <table ng-table="tableParams" class="history">
+    <table ng-table="tableParams" class="watched">
       <tr ng-repeat="w in $data" ng-include="w.template" ng-controller="WatchedRowCtrl">
 
       </tr>

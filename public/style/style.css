@@ -6,10 +6,6 @@ div[ng-include="templates.pagination"] {
     cursor: pointer;
 }
 
-.history td {
-    vertical-align: top;
-}
-
 .poster {
     position: relative;
     height: 145px;
@@ -49,36 +45,34 @@ div[ng-include="templates.pagination"] {
     height: 5px;
 }
 
-/* history table */
-.poster-container {
+/* watched table */
+.watched td {
+    padding: 0 5px;
+    vertical-align: top;
+}
+
+.watched .poster-container {
     width: 100px;
+    padding: 0;
 }
 
-.time-container {
+.watched .time-container {
     width: 20%;
-    padding: 0 5px;
 }
 
-.user-container {
+.watched .user-container {
     width: 20%;
-    padding: 0 5px;
 }
 
-.title-container {
+.watched .title-container {
     width: 60%;
-    padding: 0 5px;
 }
 
-.text-error {
+.watched .text-error {
     color: #f00;
 }
 
 /* user table */
-
-.users {
-    /*width: 100%;*/
-}
-
 .users th {
     text-align: left;
     padding: 0 5px;

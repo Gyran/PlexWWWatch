@@ -1,6 +1,6 @@
-<div class="container">
-  <div class="well">
-    <div class="well-header">
+<div class="row-fluid module">
+  <div class="well span12">
+    <div class="dashboard-well-header well-header">
       <ul class="well-header-actions">
         <li>
           <div ng-if="tableParams.settings().counts.length" class="btn-group btn-group-inverse">
@@ -89,12 +89,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="user in $data" ng-include="'partials/userRow.html'" ng-controller="UserCtrl">
+        <tr ng-repeat="user in $data" ng-include="'partials/userRow.html'" ng-controller="UserRowCtrl">
 
         </tr>
       </tbody>
     </table>
-
-
   </div>
 </div>

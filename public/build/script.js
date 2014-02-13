@@ -146,6 +146,10 @@ angular.module("plex-wwwatch",
             controller: "UsersCtrl",
             templateUrl: "partials/users.html"
         })
+        .when("/users/:user", {
+            controller: "UserCtrl",
+            templateUrl: "partials/user.html"
+        })
         .otherwise({ redirectTo: "/home" })
         ;
 }])
@@ -213,8 +217,6 @@ function WatchedRowCtrl ($scope) {
             setThumb();
         });
 
-        setThumb();
-
     })();
 
     (function () {
@@ -270,13 +272,51 @@ function UsersCtrl ($scope, PlexWatch, ngTableParams, $filter) {
 
 }
 
-function UserCtrl ($scope) {
+function UserRowCtrl ($scope) {
     (function () {
         var thumb = "img/userThumb.png";
         if ($scope.user.thumb === "") {
             $scope.user.thumb = thumb;
         }
     })();
+}
+
+function UserCtrl ($scope, $routeParams, PlexWatch) {
+    $scope.user = {
+        watched: []
+    };
+    PlexWatch.Users.get({user: $routeParams.user}, function (data) {
+        $scope.user = data;
+    });
+}
+
+function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
+    $scope.pages = function () {
+        return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
+    };
+
+    $scope.tableParams = new ngTableParams({
+        page: 1,
+        count: 10,
+        sorting: {
+            time: "desc"
+        }
+    }, {
+        total: 0,
+        getData: function($defer, params) {
+            var orderedData = params.sorting() ?
+                $filter("orderBy")($scope.user.watched, params.orderBy()) :
+                $scope.user.watched;
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+     });
+
+    $scope.$watch("user.watched", function() {
+        if ($scope.user.watched.length > 0) {
+            $scope.tableParams.total($scope.user.watched.length);
+            $scope.tableParams.reload();
+        }
+    });
 }
 
 angular.module("plex-wwwatch")
