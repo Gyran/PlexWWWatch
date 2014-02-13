@@ -29,10 +29,50 @@ class PlexWatch {
         return array_values($users);
     }
 
-    private function _watchedIterator() {
-        $statement = $this->_dbh->prepare("SELECT * FROM " . $this->_getWatchedTable() . " ORDER BY time DESC");
+    public function user($username) {
+        $config = [];
+        $config["user"] = $username;
+
+        $user = new PlexWatchUser($username);
+
+        $it = $this->_watchedIterator($config);
+        foreach ($it as $watched) {
+            $user->addWatched($watched);
+        }
+
+        return $user;
+    }
+
+    private function _watchedIterator($config = []) {
+        $bind = [];
+        $where = [];
+
+        $sql = "SELECT * FROM " . $this->_getWatchedTable();
+        if (isset($config["user"])) {
+            $where[] = ["user", ":user"];
+            $bind[] = [":user", $config["user"], PDO::PARAM_STR];
+        }
+
+        if (!empty($where)) {
+            $sql .= " WHERE ";
+            foreach ($where as $w) {
+                $sql .= " " . $w[0] . "=" . $w[1] . " ";
+            }
+        }
+
+        $sql .= " ORDER BY id DESC";
+
+        $statement = $this->_dbh->prepare($sql);
+
+        foreach ($bind as $b) {
+            $statement->bindValue($b[0], $b[1], $b[2]);
+        }
 
         return new PlexWatchWatchedIterator($statement);
+    }
+
+    private function _watchedIteratorFromStatement($statement) {
+
     }
 
     private function _getWatchedTable () {
