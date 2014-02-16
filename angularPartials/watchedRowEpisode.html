@@ -37,10 +37,12 @@
 
 <td data-title="" sortable="'user'" class="user-container poster-item">
   <div class="media-title media-heading">
-    {{ w.user }}
+    <a ng-href="#/users/{{w.user}}" class="btn-white btn-gray">
+      {{ w.user }}
+    </a>
   </div>
   <div class="media-title media-heading secondary">
-    {{ w.platform }}
+    {{ w.device }}
   </div>
   <p class="media-title media-heading secondary" ng-hide="w.ipAddress == '0'">
     {{ w.ipAddress }}

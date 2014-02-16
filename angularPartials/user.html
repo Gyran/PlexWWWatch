@@ -1,34 +1,101 @@
-<div class="subnav-container">
-  <ul class="subnav-actions">
-    <li>
-      <span class="subnav-action-label source-title">
-
-          ingvar
-
-      </span>
+<div class="container">
+  <ul class="nav nav-header pull-right">
+    <li class="poster-item media-tile-list-item photo">
+      <div class="media-poster-container">
+        <img class="user-thumb" ng-src="{{user.thumb}}">
+      </div>
     </li>
   </ul>
 
-  <ul class="subnav-list">
-    <li><a><img class="user-thumb poster" ng-src="{{user.thumb}}"></a></li>
-    <li><a class="gray active">{{ user.name }}</a></li>
-  </ul>
+  <h3>
+    {{user.name}}
+  </h3>
 </div>
 
+<div class="container">
+  <ul class="nav nav-header pull-right">
+    <li>
+      <a href ng-click="selectedStats = 'watched'"
+        class="btn-gray" ng-class="{ 'selected': selectedStats == 'watched' }">
+        Watched
+      </a>
+    </li>
+    <li>
+      <a href ng-click="selectedStats = 'types'"
+        class="btn-gray" ng-class="{ 'selected': selectedStats == 'types' }">
+        Types
+      </a>
+    </li>
+  </ul>
 
-<div class="row-fluid module">
-  <div class="well span12">
-    <div class="dashboard-well-header well-header">
-      <h3>Devices</h3>
+  <h3>Statistics</h3>
+
+  <div class="container">
+    <div class="row" ng-show="selectedStats == 'watched'">
+
+      <div class="filter-bar">
+        Total {{ user.totalWatched.watches }} watches and {{ user.totalWatched.timeWatched | duration }} watched.
+      </div>
+
+      <ul class="list card-list">
+          <li class="card-item card-2-col-item card-item-device card-4-col-item" ng-repeat="(name, interval) in user.intervalWatched">
+            <div class="card card-device">
+              <div class="card-actions"></div>
+              <h4 class="product">{{ interval.title }}</h4>
+
+              <div class="device-info-container">
+                <div class="name">{{ interval.watches }} Watches</div>
+                <div class="device text-muted">{{ interval.timeWatched | duration }} watched</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <ul class="tile-list section-tile-list">
-      <li ng-repeat="(platform, watches) in user.platforms">
-        <a href=""
+    <div class="row" ng-show="selectedStats == 'types'">
+      <div class="">
+        <ul class="list card-list">
+          <li class="card-item card-2-col-item card-item-device card-4-col-item" ng-repeat="(name, type) in user.types">
+            <div class="card card-device">
+              <i class="device-icon section-icon {{ typeIcon(name) }}"></i>
+              <div class="card-actions"></div>
+              <h4 class="product">{{ name | ucFirst }}s</h4>
+
+              <div class="device-info-container">
+                <div class="name">{{ type.watches }} Watches</div>
+                <div class="device text-muted">{{ type.timeWatched | duration }} watched</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="container">
+  <h3>Devices</h3>
+  <div class="device-list-container">
+    <ul class="list card-list">
+        <li class="card-item card-4-col-item card-2-col-item card-item-device" ng-repeat="(name, device) in user.devices" ng-click="device.selected = !device.selected" ng-class="{'selected': device.selected}">
+          <div ng-init="device.selected = true"></div>
+          <div class="card card-device">
+            <i class="device-icon {{ deviceIcon(device) }}"></i>
+            <div class="card-actions"></div>
+            <h4 class="product">{{ name }}</h4>
+
+            <span class="version text-muted">{{ device.platform }}</span>
+
+            <div class="device-info-container">
+              <div class="name">{{ device.watches }} Watches</div>
+              <div class="device text-muted">{{ device.timeWatched | duration }} watched</div>
+            </div>
+          </div>
       </li>
     </ul>
   </div>
 </div>
-
 
 <ng-include src="'partials/recentlyWatched.html'" ng-controller="UserRecentlyWatchedCtrl"></ng-include>

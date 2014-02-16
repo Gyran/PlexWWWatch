@@ -66,7 +66,7 @@ angular.module("plex",
 })
 ;
 
-function PlexMyPlexSignInCtrl ($scope, $rootScope, localStorageService, myPlex) {
+function PlexCtrl ($scope, $rootScope, localStorageService, myPlex) {
     $scope.username = "";
     $scope.password = "";
     $scope.remember = true;
@@ -127,6 +127,22 @@ angular.module("plex-wwwatch",
         return promise;
     };
 })
+.factory("plexWWWatchConstants", function () {
+    return {
+        deviceIcons: {
+            "Plex Home Theater": "device-icon-pht",
+            "Firefox": "device-icon-firefox",
+            "Chrome": "device-icon-chrome",
+            "Internet Explorer": "device-icon-ie",
+            "iOS": "device-icon-ios",
+            "Android": "device-icon-android"
+        },
+        typeIcons: {
+            "episode": "glyphicon display",
+            "movie": "glyphicon film"
+        }
+    };
+})
 .config(["$routeProvider", function ($routeProvider) {
     $routeProvider
         .when("/home", {
@@ -150,10 +166,14 @@ angular.module("plex-wwwatch",
             controller: "UserCtrl",
             templateUrl: "partials/user.html"
         })
+        .when("/plex", {
+            controller: "PlexCtrl",
+            templateUrl: "partials/plex.html"
+        })
         .otherwise({ redirectTo: "/home" })
         ;
 }])
-.run(function ($rootScope, Settings, localStorageService) {
+.run(function ($rootScope, Settings, localStorageService, $templateCache) {
     Settings.get().then(function (promise) {
         $rootScope.settings = promise.data;
     });
@@ -237,10 +257,31 @@ function WatchedRowCtrl ($scope) {
 }
 
 function SettingsCtrl ($scope, $rootScope, Settings) {
+    $scope.containers = [
+        {
+            title: "PlexWWWatch",
+            sections: ["General"],
+            template: "partials/settings/PlexWWWatch.html",
+            selected: 0
+        },
+        {
+            title: "Plex Watch",
+            sections: ["General"],
+            template: "partials/settings/PlexWatch.html",
+            selected: 0
+        }
+    ];
+
+    $scope.current = 0;
+
     $scope.save = function (settings) {
         Settings.save(settings).then(function (promise) {
             $rootScope.settings = promise.data;
         });
+    };
+
+    $scope.select = function (index) {
+        $scope.current = index;
     };
 }
 
@@ -287,11 +328,12 @@ function UserRowCtrl ($scope) {
     })();
 }
 
-function UserCtrl ($scope, $routeParams, PlexWatch) {
+function UserCtrl ($scope, $routeParams, PlexWatch, plexWWWatchConstants) {
     $scope.user = {
         watched: [],
         thumb: "img/userThumb.png"
     };
+    $scope.selectedStats = "watched";
 
     (function () {
         var thumb = "img/userThumb.png";
@@ -303,6 +345,22 @@ function UserCtrl ($scope, $routeParams, PlexWatch) {
     PlexWatch.Users.get({user: $routeParams.user}, function (data) {
         $scope.user = data;
     });
+
+    $scope.deviceIcon = function (device) {
+        var icon = plexWWWatchConstants.deviceIcons[device.platform];
+        if (icon) {
+            return icon;
+        }
+        return "device-icon-default";
+    };
+
+    $scope.typeIcon = function (type) {
+        var icon = plexWWWatchConstants.typeIcons[type];
+        if (icon) {
+            return icon;
+        }
+        return "";
+    };
 }
 
 function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
@@ -319,9 +377,19 @@ function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
     }, {
         total: 0,
         getData: function($defer, params) {
+            var filteredData = $filter("filter")($scope.user.watched, function (watched) {
+                var ret = false;
+                angular.forEach($scope.user.devices, function (device, name) {
+                    if (watched.device === name) {
+                        ret = device.selected;
+                    }
+                });
+                return ret;
+            });
+
             var orderedData = params.sorting() ?
-                $filter("orderBy")($scope.user.watched, params.orderBy()) :
-                $scope.user.watched;
+                $filter("orderBy")(filteredData, params.orderBy()) :
+                filteredData;
             $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
         }
      });
@@ -332,12 +400,29 @@ function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
             $scope.tableParams.reload();
         }
     });
+
+    $scope.$watch("user.devices", function () {
+        if ($scope.user.watched.length > 0) {
+            $scope.tableParams.reload();
+        }
+    }, true);
+
+    $scope.min = Math.min;
+    $scope.max = Math.max;
 }
 
 angular.module("plex-wwwatch")
 .filter("duration", function () {
     return function (input) {
+        if (input === 0) {
+            return "nothing";
+        }
         return moment.duration(input).humanize();
+    };
+})
+.filter("ucFirst", function () {
+    return function (input) {
+        return input.charAt(0).toUpperCase() + input.slice(1);
     };
 })
 ;

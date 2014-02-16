@@ -69,10 +69,31 @@ function WatchedRowCtrl ($scope) {
 }
 
 function SettingsCtrl ($scope, $rootScope, Settings) {
+    $scope.containers = [
+        {
+            title: "PlexWWWatch",
+            sections: ["General"],
+            template: "partials/settings/PlexWWWatch.html",
+            selected: 0
+        },
+        {
+            title: "Plex Watch",
+            sections: ["General"],
+            template: "partials/settings/PlexWatch.html",
+            selected: 0
+        }
+    ];
+
+    $scope.current = 0;
+
     $scope.save = function (settings) {
         Settings.save(settings).then(function (promise) {
             $rootScope.settings = promise.data;
         });
+    };
+
+    $scope.select = function (index) {
+        $scope.current = index;
     };
 }
 
@@ -119,11 +140,12 @@ function UserRowCtrl ($scope) {
     })();
 }
 
-function UserCtrl ($scope, $routeParams, PlexWatch) {
+function UserCtrl ($scope, $routeParams, PlexWatch, plexWWWatchConstants) {
     $scope.user = {
         watched: [],
         thumb: "img/userThumb.png"
     };
+    $scope.selectedStats = "watched";
 
     (function () {
         var thumb = "img/userThumb.png";
@@ -135,6 +157,22 @@ function UserCtrl ($scope, $routeParams, PlexWatch) {
     PlexWatch.Users.get({user: $routeParams.user}, function (data) {
         $scope.user = data;
     });
+
+    $scope.deviceIcon = function (device) {
+        var icon = plexWWWatchConstants.deviceIcons[device.platform];
+        if (icon) {
+            return icon;
+        }
+        return "device-icon-default";
+    };
+
+    $scope.typeIcon = function (type) {
+        var icon = plexWWWatchConstants.typeIcons[type];
+        if (icon) {
+            return icon;
+        }
+        return "";
+    };
 }
 
 function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
@@ -151,9 +189,19 @@ function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
     }, {
         total: 0,
         getData: function($defer, params) {
+            var filteredData = $filter("filter")($scope.user.watched, function (watched) {
+                var ret = false;
+                angular.forEach($scope.user.devices, function (device, name) {
+                    if (watched.device === name) {
+                        ret = device.selected;
+                    }
+                });
+                return ret;
+            });
+
             var orderedData = params.sorting() ?
-                $filter("orderBy")($scope.user.watched, params.orderBy()) :
-                $scope.user.watched;
+                $filter("orderBy")(filteredData, params.orderBy()) :
+                filteredData;
             $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
         }
      });
@@ -164,4 +212,13 @@ function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
             $scope.tableParams.reload();
         }
     });
+
+    $scope.$watch("user.devices", function () {
+        if ($scope.user.watched.length > 0) {
+            $scope.tableParams.reload();
+        }
+    }, true);
+
+    $scope.min = Math.min;
+    $scope.max = Math.max;
 }

@@ -18,7 +18,7 @@
   <h3>Recently Watched</h3>
 
   <table ng-table="tableParams" class="watched">
-    <tr ng-repeat="w in $data" ng-include="w.template" ng-controller="WatchedRowCtrl">
+    <tr ng-repeat="w in $data" ng-include="w.template" ng-controller="WatchedRowCtrl" class="striped-list-item">
 
     </tr>
   </table>

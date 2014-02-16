@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html ng-app="plex-wwwatch">
+<html ng-app="plex-wwwatch" lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>PlexWWWatch</title>
     <script src="build/bower.js"></script>
     <script src="build/script.js"></script>
     <script src="build/partials.min.js"></script>
     <link href="build/style.css" rel="stylesheet">
   </head>
   <body>
-    <div class="application show-nav-bar">
+    <div class="application show-nav-bar show-multiserver">
       <div class="nav-bar">
 
         <ul class="nav nav-bar-nav">
@@ -27,6 +31,11 @@
 
         <ul class="nav nav-bar-nav nav-bar-right">
           <li>
+            <a href="#/plex">
+              <i class="plex-icon chevron"></i>
+            </a>
+          </li>
+          <li>
             <a href="#/settings">
               <span class="text-error" ng-if="!settings.correct">
                 You have error in your settings
@@ -37,7 +46,7 @@
         </ul>
       </div>
 
-      <div class="scroll-container minimal-scrollbar">
+      <div class="scroll-container minimal-scroll">
         <div ng-view></div>
     </div>
   </body>

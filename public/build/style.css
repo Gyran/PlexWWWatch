@@ -16,6 +16,12 @@ div[ng-include="templates.pagination"] {
     width: 100%;
 }
 
+.striped-list-item:hover, .striped-list-item .media-container:hover
+{
+  background-color:rgba(255,255,255,.1);
+  color:#fff;
+}
+
 .watched td {
     vertical-align: top;
 }
@@ -86,6 +92,7 @@ div[ng-include="templates.pagination"] {
     height: 5px;
 }
 
+/* users table */
 .users {
     width: 100%;
 }
@@ -115,6 +122,85 @@ div[ng-include="templates.pagination"] {
     width: 5%;
 }
 
-.users .timeWatched-container {
+.users .totalWatched-container {
     width: 25%;
+}
+
+/* user page */
+.user-thumb {
+    width: 60px;
+}
+/*
+.card-item-device {
+    width: 25%;
+}
+
+.card-2-col-item:nth-child(odd) {
+    clear: none;
+}
+
+*/
+
+.card-item-device {
+    float: none;
+    width: auto;
+    cursor: pointer;
+}
+
+.selected .card {
+    background-color: rgba(255,255,255,.1);
+}
+
+.card-4-col-item h4 {
+    max-width: 75%;
+}
+
+@media (min-width: 768px) {
+    .card-item-device {
+        float: left;
+        width: 50%;
+    }
+
+    .card-item:nth-child(odd) {
+        clear: none;
+    }
+}
+
+@media (min-width:1200px) {
+    .card-item-device {
+        width: 25%;
+        clear: none;
+    }
+
+    .card-item-device:nth-child(3n+1) {
+        clear: none;
+    }
+
+    .card-4-col-item {
+        float: left;
+        width: 25%;
+    }
+
+    .card-4-col-item:nth-child(odd) {
+        clear: none;
+    }
+}
+
+.chevron {
+    color: #ff9d00;
+    top: 0;
+}
+
+.btn-white {
+    color: #fff;
+}
+
+.btn-white:hover {
+    color: #999;
+}
+
+.card .section-icon {
+    line-height: 100px;
+    font-size: 72px;
+    left: 10px;
 }

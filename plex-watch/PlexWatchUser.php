@@ -3,40 +3,21 @@ class PlexWatchUser implements JsonSerializable {
 
     public function __construct($username) {
         $this->name = $username;
-        $this->platforms = array();
+        $this->devices = array();
         $this->id = -1;
         $this->thumb = "";
-        $this->timeWatched = 0;
-        $this->episodesWatched = 0;
-        $this->moviesWatched = 0;
+        $this->totalWatched = ["watches" => 0, "timeWatched" => 0];
         $this->lastWatchedAt = 0;
+        $this->types = array();
     }
 
     public function addWatched($watched) {
-        $xml = $watched->xml;
-        if ($this->id < 0 && isset($xml->User["id"])) {
-            $this->id = $xml->User["id"]->__toString();
-        }
-
-        if ($this->thumb === "" && isset($xml->User["thumb"])) {
-            $this->thumb = $xml->User["thumb"]->__toString();
-        }
-
-        if ($this->lastWatchedAt < $watched->time) {
-            $this->lastWatchedAt = $watched->time;
-        }
-
-        switch ($watched->type) {
-            case "movie":
-                $this->moviesWatched = $this->moviesWatched + 1;
-                break;
-            case "episode":
-                $this->episodesWatched = $this->episodesWatched + 1;
-                break;
-        }
-
-        $this->timeWatched = $this->timeWatched + $watched->timeWatched;
-        $this->_addPlatform($watched);
+        $this->_addId($watched);
+        $this->_addThumb($watched);
+        $this->_addLastWatched($watched);
+        $this->_addType($watched);
+        $this->_addTimeWatched($watched);
+        $this->_addDevice($watched);
     }
 
     public function jsonSerialize() {
@@ -48,23 +29,55 @@ class PlexWatchUser implements JsonSerializable {
         return $ret;
     }
 
-    protected function _addPlatform($watched) {
-        $platfrom = $watched->platform;
-        if (!in_array($platfrom, $this->platforms)) {
-            $this->platforms[] = $platfrom;
+    protected function _addThumb($watched) {
+        if ($this->thumb === "" && isset($watched->xml->User["thumb"])) {
+            $this->thumb = $watched->xml->User["thumb"]->__toString();
+        }
+    }
+
+    protected function _addId($watched) {
+        if ($this->id < 0 && isset($watched->xml->User["id"])) {
+            $this->id = $watched->xml->User["id"]->__toString();
+        }
+    }
+
+    protected function _addLastWatched($watched) {
+        if ($this->lastWatchedAt < $watched->time) {
+            $this->lastWatchedAt = $watched->time;
+        }
+    }
+
+    protected function _addTimeWatched($watched) {
+        $this->totalWatched["watches"] += 1;
+        $this->totalWatched["timeWatched"] += $watched->timeWatched;
+    }
+
+    protected function _addType($watched) {
+        $type = $watched->type;
+        if (!isset($this->types[$type])) {
+            $this->types[$type] = 1;
+        } else {
+            $this->types[$type] += 1;
+        }
+    }
+
+    protected function _addDevice($watched) {
+        $device = $watched->device;
+        if (!in_array($device, $this->devices)) {
+            $this->devices[] = $device;
         }
     }
 
     protected $jsonFields = array(
-        "id", "name", "platforms", "thumb", "timeWatched",
-        "moviesWatched", "episodesWatched", "lastWatchedAt"
+        "id", "name", "devices", "thumb", "totalWatched",
+        "lastWatchedAt", "types"
     );
 
     public $id;
     public $name;
-    public $platforms;
+    public $devices;
     public $thumb;
-    public $timeWatched;
+    public $totalWatched;
     public $moviesWatched;
     public $episodesWatched;
 }

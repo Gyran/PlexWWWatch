@@ -44,7 +44,7 @@
             }"
             ng-click="tableParams.sorting({'episodesWatched' : tableParams.isSortBy('episodesWatched', 'asc') ? 'desc' : 'asc'})"
             class="sortable episodes-cell">
-            <i class="glyphicon calendar"></i>
+            <i class="glyphicon display"></i>
           </th>
           <th ng-class="{
               'sort-asc': tableParams.isSortBy('moviesWatched', 'asc'),
@@ -73,7 +73,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="user in $data" ng-include="'partials/userRow.html'" ng-controller="UserRowCtrl">
+        <tr ng-repeat="user in $data" ng-include="'partials/userRow.html'" ng-controller="UserRowCtrl" class="striped-list-item">
 
         </tr>
       </tbody>

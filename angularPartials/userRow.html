@@ -2,21 +2,21 @@
     <img ng-src="{{ user.thumb }}" class="user-thumb">
 </td>
 <td class="name-container">
-  <a href="#/users/{{user.name}}" class="btn-gray">
+  <a ng-href="#/users/{{user.name}}" class="btn-gray">
     {{user.name}}
   </a>
 </td>
 <td class="devices-container">
-  {{user.platforms.length}}
+  {{user.devices.length}}
 </td>
 <td class="numwatched-container">
-  {{ user.episodesWatched }}
+  {{ user.types.episode }}
 </td>
 <td class="numwatched-container">
-  {{ user.moviesWatched }}
+  {{ user.types.movie }}
 </td>
-<td class="timeWatched-container">
-  {{ user.timeWatched | duration }}
+<td class="totalWatched-container">
+  {{ user.totalWatched.timeWatched | duration }}
 </td>
 <td>
   <span am-time-ago="user.lastWatchedAt"></span>

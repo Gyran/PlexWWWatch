@@ -7,7 +7,7 @@ var uglify = require("gulp-uglify");
 var styl = require('gulp-styl');
 var watch = require('gulp-watch');
 
-var angularPartials = "./angularpartials/*.html";
+var angularPartials = "./angularPartials/**/*.html";
 var scripts = "./public/scripts/**/*.js";
 var styles = "./public/style/**/*.css";
 

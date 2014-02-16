@@ -27,6 +27,22 @@ angular.module("plex-wwwatch",
         return promise;
     };
 })
+.factory("plexWWWatchConstants", function () {
+    return {
+        deviceIcons: {
+            "Plex Home Theater": "device-icon-pht",
+            "Firefox": "device-icon-firefox",
+            "Chrome": "device-icon-chrome",
+            "Internet Explorer": "device-icon-ie",
+            "iOS": "device-icon-ios",
+            "Android": "device-icon-android"
+        },
+        typeIcons: {
+            "episode": "glyphicon display",
+            "movie": "glyphicon film"
+        }
+    };
+})
 .config(["$routeProvider", function ($routeProvider) {
     $routeProvider
         .when("/home", {
@@ -50,10 +66,14 @@ angular.module("plex-wwwatch",
             controller: "UserCtrl",
             templateUrl: "partials/user.html"
         })
+        .when("/plex", {
+            controller: "PlexCtrl",
+            templateUrl: "partials/plex.html"
+        })
         .otherwise({ redirectTo: "/home" })
         ;
 }])
-.run(function ($rootScope, Settings, localStorageService) {
+.run(function ($rootScope, Settings, localStorageService, $templateCache) {
     Settings.get().then(function (promise) {
         $rootScope.settings = promise.data;
     });

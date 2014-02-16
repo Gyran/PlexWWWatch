@@ -55,7 +55,7 @@ angular.module("plex",
 })
 ;
 
-function PlexMyPlexSignInCtrl ($scope, $rootScope, localStorageService, myPlex) {
+function PlexCtrl ($scope, $rootScope, localStorageService, myPlex) {
     $scope.username = "";
     $scope.password = "";
     $scope.remember = true;
