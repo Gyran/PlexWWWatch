@@ -80,7 +80,7 @@ angular.module("plex-wwwatch",
             controller: "PlexCtrl",
             templateUrl: "partials/plex.html"
         })
-        .when("/welcome", {
+        .when("/check", {
             controller: "CheckCtrl",
             templateUrl: "partials/check.html"
         })
@@ -88,12 +88,7 @@ angular.module("plex-wwwatch",
         ;
 }])
 .run(function ($rootScope, PWWWService, localStorageService) {
-    PWWWService.check().then(function () {}, function (err) {
-        console.log("ERROR!", err);
-    });
-
     PWWWService.getSettings().then(function (settings) {
-        console.log("got settings", settings);
         $rootScope.settings = settings;
     });
 

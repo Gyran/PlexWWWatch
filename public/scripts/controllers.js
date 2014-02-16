@@ -225,6 +225,11 @@ function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
     $scope.max = Math.max;
 }
 
-function CheckCtrl ($scope) {
-
+function CheckCtrl ($scope, $location, PWWWService) {
+    $scope.errors = [];
+    PWWWService.check().then(function () {
+        $location.path("/home");
+    }, function (err) {
+        $scope.errors = err;
+    });
 }
