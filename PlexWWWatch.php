@@ -49,7 +49,7 @@ class PlexWWWatch {
             $settings = $this->settings();
         }
 
-        $validFields = ["dbPath", "plexMediaServerHost", "grouped"];
+        $validFields = ["dbPath", "plexMediaServerHost", "grouped", "correct", "plexMediaServerHostCorrect", "dbPathCorrect"];
         foreach (get_object_vars($settings) as $key => $value) {
             if (!in_array($key, $validFields)) {
                 $ret[] = "Key [" . $key . "] is not permitted";
