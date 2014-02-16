@@ -110,21 +110,36 @@ angular.module("plex-wwwatch",
         "LocalStorageModule",
         "ngPlexWatch"
     ])
-.service("Settings", function ($http) {
-    this.save = function (settings) {
-        var promise = $http.post("backend/settings.php", settings).success(function (data) {
-            return data;
-        });
-        return promise;
-    };
-
-    this.get = function () {
-        var promise = $http.get("backend/settings.php").success(function (data) {
-            if (data) {
-                return data;
+.service("PWWWService", function ($http, $q) {
+    this.check = function () {
+        var deferred = $q.defer();
+        $http.get("backend/check.php").success(function (data) {
+            if (data.length <= 0) {
+                deferred.resolve();
+            } else {
+                deferred.reject(data);
             }
         });
-        return promise;
+
+        return deferred.promise;
+    };
+
+    this.getSettings = function () {
+        var deferred = $q.defer();
+        $http.get("backend/settings.php").success(function (data) {
+            deferred.resolve(data);
+        });
+
+        return deferred.promise;
+    };
+
+    this.saveSettings = function (settings) {
+        var deferred = $q.defer();
+        $http.post("backend/settings.php", settings).success(function (data) {
+            deferred.resolve(data);
+        });
+
+        return deferred.promise;
     };
 })
 .factory("plexWWWatchConstants", function () {
@@ -151,12 +166,7 @@ angular.module("plex-wwwatch",
         })
         .when("/settings", {
             controller: "SettingsCtrl",
-            templateUrl: "partials/settings.html",
-            resolve: {
-                settings: function (Settings) {
-                    return Settings;
-                }
-            }
+            templateUrl: "partials/settings.html"
         })
         .when("/users", {
             controller: "UsersCtrl",
@@ -170,12 +180,21 @@ angular.module("plex-wwwatch",
             controller: "PlexCtrl",
             templateUrl: "partials/plex.html"
         })
-        .otherwise({ redirectTo: "/home" })
+        .when("/welcome", {
+            controller: "CheckCtrl",
+            templateUrl: "partials/check.html"
+        })
+        .otherwise({ redirectTo: "/check" })
         ;
 }])
-.run(function ($rootScope, Settings, localStorageService, $templateCache) {
-    Settings.get().then(function (promise) {
-        $rootScope.settings = promise.data;
+.run(function ($rootScope, PWWWService, localStorageService) {
+    PWWWService.check().then(function () {}, function (err) {
+        console.log("ERROR!", err);
+    });
+
+    PWWWService.getSettings().then(function (settings) {
+        console.log("got settings", settings);
+        $rootScope.settings = settings;
     });
 
     $rootScope.plex = {
@@ -256,7 +275,7 @@ function WatchedRowCtrl ($scope) {
     })();
 }
 
-function SettingsCtrl ($scope, $rootScope, Settings) {
+function SettingsCtrl ($scope, $rootScope, PWWWService) {
     $scope.containers = [
         {
             title: "PlexWWWatch",
@@ -271,17 +290,19 @@ function SettingsCtrl ($scope, $rootScope, Settings) {
             selected: 0
         }
     ];
-
     $scope.current = 0;
-
-    $scope.save = function (settings) {
-        Settings.save(settings).then(function (promise) {
-            $rootScope.settings = promise.data;
-        });
-    };
+    $scope.loading = false;
 
     $scope.select = function (index) {
         $scope.current = index;
+    };
+
+    $scope.save = function (settings) {
+        $scope.loading = true;
+        PWWWService.saveSettings(settings).then(function (settings) {
+            $rootScope.settings = settings;
+            $scope.loading = false;
+        });
     };
 }
 
@@ -409,6 +430,10 @@ function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
 
     $scope.min = Math.min;
     $scope.max = Math.max;
+}
+
+function CheckCtrl ($scope) {
+
 }
 
 angular.module("plex-wwwatch")

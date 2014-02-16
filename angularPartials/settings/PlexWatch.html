@@ -1,0 +1,24 @@
+<form>
+  <div ng-show="containers[current].selected == 0">
+     <div class="form-group">
+      <label for="pwDB">Plex Watch Database</label>
+      <input type="text" id="pwDB" class="form-control" name="pwDB" value="" ng-model="settings.dbPath">
+      <p class="help-block">
+        Location of the Plex Watch database.
+        (/opt/plexWatch/PlexWatch.db)
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label">
+        <input type="checkbox" id="grouped" ng-model="settings.grouped"> &nbsp;Group
+      </label>
+      <p class="help-block">
+        Show all results grouped
+      </p>
+    </div>
+  </div>
+  <div ng-show="containers[current].selected == 1">
+    wut wut
+  </div>
+</form>

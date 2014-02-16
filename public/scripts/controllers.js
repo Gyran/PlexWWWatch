@@ -68,7 +68,7 @@ function WatchedRowCtrl ($scope) {
     })();
 }
 
-function SettingsCtrl ($scope, $rootScope, Settings) {
+function SettingsCtrl ($scope, $rootScope, PWWWService) {
     $scope.containers = [
         {
             title: "PlexWWWatch",
@@ -83,17 +83,19 @@ function SettingsCtrl ($scope, $rootScope, Settings) {
             selected: 0
         }
     ];
-
     $scope.current = 0;
-
-    $scope.save = function (settings) {
-        Settings.save(settings).then(function (promise) {
-            $rootScope.settings = promise.data;
-        });
-    };
+    $scope.loading = false;
 
     $scope.select = function (index) {
         $scope.current = index;
+    };
+
+    $scope.save = function (settings) {
+        $scope.loading = true;
+        PWWWService.saveSettings(settings).then(function (settings) {
+            $rootScope.settings = settings;
+            $scope.loading = false;
+        });
     };
 }
 
@@ -221,4 +223,8 @@ function UserRecentlyWatchedCtrl ($scope, ngTableParams, $filter) {
 
     $scope.min = Math.min;
     $scope.max = Math.max;
+}
+
+function CheckCtrl ($scope) {
+
 }

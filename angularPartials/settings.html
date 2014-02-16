@@ -1,60 +1,41 @@
 <div class="container">
-  <div class="settings-container well">
-    <div class="well-header">
-      <ul class="subnav-list well-header-list">
-        <li><i class="subnav-icon glyphicon settings"></i></li>
-        <li>Settings</li>
-      </ul>
-    </div>
+  <ul class="nav nav-header pull-right">
+    <li ng-repeat="container in containers" class="">
+      <a href ng-click="select($index)"
+        class="btn-gray" ng-class="{ 'selected': current == $index }">
+        {{ container.title }}
+      </a>
+    </li>
+  </ul>
 
-    <div>
-      <form class="preferences-form">
-        <fieldset>
-          <div class="preferences-group active">
-            <div class="control-group" ng-class="{error: !settings.plexMediaServerHostCorrect}">
-              <label class="control-label" for="input_dbPath">
-                Plex Media Server Host
-              </label>
-              <div class="controls">
-                <input id="input_dbPath" type="text" class="input-dark span4" name="FriendlyName" ng-model="settings.plexMediaServerHost">
-                <p class="help-block">
-                  Hostname for the Plex Media Server
-                  (http://hostname.prg:32400).
-                  Relative to your browser.
-                </p>
-              </div>
-            </div>
+  <h3>Settings</h3>
 
-            <div class="control-group" ng-class="{error: !settings.dbPathCorrect}">
-              <label class="control-label" for="input_dbPath">
-                Plex Watch database file
-              </label>
-              <div class="controls">
-                <input id="input_dbPath" type="text" class="input-dark span4" name="FriendlyName" ng-model="settings.dbPath">
-                <p class="help-block">
-                  Location of the Plex Watch database
-                </p>
-              </div>
-            </div>
+  <div class="settings-container">
+    <div class="row">
+      <div class="col-md-3">
+        <ul class="settings-nav nav nav-stacked nav-sidebar">
+          <li ng-repeat="section in containers[current].sections">
+            <a class="btn-gray" href ng-click="containers[current].selected = $index"
+              ng-class="{ 'selected': containers[current].selected == $index }">
+                {{ section }}
+            </a>
+          </li>
+        </ul>
+      </div>
 
-            <div class="control-group">
-              <label class="checkbox" for="input_grouped">
-                <input id="input_grouped" type="checkbox" value="1" class="input-dark" name="collectUsageData" ng-model="settings.grouped"> &nbsp;Grouped data
-              </label>
-              <p class="help-block">
-                Group results
-              </p>
-            </div>
+      <div class="col-md-9">
+        <div ng-include="containers[current].template">
         </div>
+        <div class="form-footer">
+        <button type="submit" class="submit-btn btn btn-lg btn-primary btn-loading" ng-class="{'active': loading}" ng-click="save(settings)">
+          <div class="loading loading-sm"></div>
+          <span class="btn-label">Save Changes</span>
+        </button>
 
-        <div class="main-actions form-actions">
-          <button type="submit" class="btn btn-medium btn-primary" ng-click="save(settings)">
-            Save
-          </button>
-        </div>
-        </fieldset>
-      </form>
+        <span class="form-message"></span>
+      </div>
+      </div>
     </div>
-
   </div>
+
 </div>
