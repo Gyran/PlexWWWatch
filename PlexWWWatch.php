@@ -8,7 +8,9 @@ class PlexWWWatch {
         if (!$this->_plexWatch) {
             $settings = $this->settings();
 
-            $this->_plexWatch = new PlexWatch($settings->dbPath, $settings->grouped);
+            if ($settings) {
+                $this->_plexWatch = new PlexWatch($settings->dbPath, $settings->grouped);
+            }
         }
         return $this->_plexWatch;
     }
@@ -31,14 +33,15 @@ class PlexWWWatch {
             $ret[] = "You need atleast PHP version 5.4";
         }
 
-        if (!file_exists(__DIR__ . self::$SETTINGS_FILE)) {
-            $fd = fopen(__DIR__ . self::$SETTINGS_FILE, "w");
-            fclose($fd);
-        }
+        /*if (!file_exists(__DIR__ . self::$SETTINGS_FILE)) {
+            //$fd = fopen(__DIR__ . self::$SETTINGS_FILE, "w+");
+            //fclose($fd);
+            file_put_contents(__DIR__ . self::$SETTINGS_FILE, "asd");
+        }*/
 
-        if (!is_writable(__DIR__ . self::$SETTINGS_FILE)) {
+        /*if (!is_writable(__DIR__ . self::$SETTINGS_FILE)) {
             $ret[] = "PlexWWWatch/settings/settings is not writable";
-        }
+        }*/
 
         return $ret;
     }
@@ -50,9 +53,11 @@ class PlexWWWatch {
         }
 
         $validFields = ["dbPath", "plexMediaServerHost", "grouped", "correct", "plexMediaServerHostCorrect", "dbPathCorrect"];
-        foreach (get_object_vars($settings) as $key => $value) {
-            if (!in_array($key, $validFields)) {
-                $ret[] = "Key [" . $key . "] is not permitted";
+        if ($settings) {
+            foreach (get_object_vars($settings) as $key => $value) {
+                if (!in_array($key, $validFields)) {
+                    $ret[] = "Key [" . $key . "] is not permitted";
+                }
             }
         }
 
@@ -69,13 +74,33 @@ class PlexWWWatch {
         return $ret;
     }
 
-    public function saveSettings ($settings) {
-        $check = $this->checkSettings($settings);
+    public function saveSettings ($settingsIn) {
+        $settings = (object)[
+            "dbPath" => "",
+            "plexMediaServerHost" => "",
+            "grouped" => false
+        ];
 
-        if (!empty($check)) {
-            echo "ERROR!";
-            print_r($check);
-        } else {
+
+        if (isset($settingsIn->dbPath)) {
+            $settings->dbPath = $settingsIn->dbPath;
+        }
+        if (isset($settingsIn->plexMediaServerHost)) {
+            $settings->plexMediaServerHost = $settingsIn->plexMediaServerHost;
+        }
+        if (isset($settingsIn->grouped)) {
+            $settings->grouped = $settingsIn->grouped;
+        }
+
+        //$check = $this->checkSettings($settings);
+
+        //if (!empty($check)) {
+            //echo "ERROR!";
+            //print_r($check);
+        //} else {
+            //file_put_contents(__DIR__ . self::$SETTINGS_FILE, json_encode($settings));
+        //}
+        if ($settings) {
             file_put_contents(__DIR__ . self::$SETTINGS_FILE, json_encode($settings));
         }
         return $settings;

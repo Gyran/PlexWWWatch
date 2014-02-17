@@ -36,7 +36,11 @@ angular.module("plex-wwwatch",
     this.saveSettings = function (settings) {
         var deferred = $q.defer();
         $http.post("backend/settings.php", settings).success(function (data) {
-            deferred.resolve(data);
+            if (data.error.length > 0) {
+                deferred.reject(data.error);
+            } else {
+                deferred.resolve(data.settings);
+            }
         });
 
         return deferred.promise;
@@ -87,9 +91,11 @@ angular.module("plex-wwwatch",
         .otherwise({ redirectTo: "/check" })
         ;
 }])
-.run(function ($rootScope, PWWWService, localStorageService) {
+.run(function ($rootScope, PWWWService, localStorageService, $location) {
     PWWWService.getSettings().then(function (settings) {
         $rootScope.settings = settings;
+    }, function () {
+        $location.path("/check");
     });
 
     $rootScope.plex = {
