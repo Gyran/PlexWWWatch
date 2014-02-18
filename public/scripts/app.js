@@ -10,7 +10,7 @@ angular.module("plex-wwwatch",
         "LocalStorageModule",
         "ngPlexWatch"
     ])
-.service("PWWWService", function ($http, $q) {
+.service("PWWWService", function ($http, $q, $resource) {
     this.check = function () {
         var deferred = $q.defer();
         $http.get("backend/check.php").success(function (data) {
@@ -23,6 +23,19 @@ angular.module("plex-wwwatch",
 
         return deferred.promise;
     };
+
+    this.recentlyAdded = $resource("backend/recentlyAdded.php");
+
+/*
+    this.recentlyAdded = function () {
+        var deferred = $q.defer();
+        $http.get("backend/recentlyAdded.php").success(function (data) {
+            deferred.resolve(data);
+        });
+
+        return deferred.promise;
+    };
+*/
 
     this.getSettings = function () {
         var deferred = $q.defer();

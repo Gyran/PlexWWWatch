@@ -6,7 +6,7 @@ class PlexWatchWatched implements JsonSerializable {
         $this->sessionId        = $dbrow["session_id"];
         $this->time             = $dbrow["time"] * 1000;
         $this->user             = $dbrow["user"];
-        $this->device         = $dbrow["platform"];
+        $this->device           = $dbrow["platform"];
         $this->title            = $dbrow["title"];
         $this->origTitle        = $dbrow["orig_title"];
         $this->origTitleEp      = $dbrow["orig_title_ep"];

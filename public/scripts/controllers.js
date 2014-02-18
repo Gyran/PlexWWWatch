@@ -235,3 +235,63 @@ function CheckCtrl ($scope, $location, PWWWService) {
         $scope.errors = err;
     });
 }
+
+function RecentlyAddedCtrl ($scope, PWWWService) {
+    var itemWidth = 174;
+    var listWidth = 0;
+    var stepSize = 1000;
+
+    $scope.positionStyle = {
+        "-webkit-transform": "translate(0, 0)"
+    };
+    $scope.listWidthStyle = {
+        width: 0
+    };
+
+    $scope.page = 1;
+    $scope.pages = 1;
+    $scope.items = [];
+
+    $scope.recentlyAdded = PWWWService.recentlyAdded.query({}, function (data) {
+        listWidth = data.length * itemWidth;
+        $scope.pages = Math.ceil(listWidth / stepSize);
+        $scope.page = 1;
+
+        $scope.items = data;
+        $scope.listWidthStyle = {
+            width: listWidth + "px"
+        };
+
+    });
+
+    $scope.$watch("page", function () {
+        var xpos = "-" + ( ($scope.page - 1) * stepSize);
+        $scope.positionStyle = {
+            "-webkit-transform": "translate(" + xpos + "px, 0)"
+        };
+    });
+
+    $scope.min = Math.min;
+    $scope.max = Math.max;
+
+}
+
+function RecentlyAddedItemCtrl ($scope) {
+    (function () {
+        var templates = {
+            "season": "partials/recentlyAdded/season.html",
+            "movie": "partials/recentlyAdded/movie.html"
+        };
+        var template = "partials/recentlyAdded/item.html";
+
+        if (templates.hasOwnProperty($scope.item.type)) {
+            template = templates[$scope.item.type];
+        }
+        $scope.item.template = template;
+    })();
+
+    (function () {
+        $scope.item.thumbsrc = "backend/art.php?thumb=" + $scope.item.thumb;
+    })();
+
+}

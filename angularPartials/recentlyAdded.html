@@ -1,0 +1,29 @@
+<div class="dashboard-container" ng-controller="RecentlyAddedCtrl">
+  <ul class="nav nav-header nav-dashboard pull-right">
+    <li>
+      <a class="previous-btn btn-gray"
+        ng-class="{'disabled': page <= 1}"
+        ng-click="page = max(1, page - 1)">
+        <i class="glyphicon chevron-left"></i>
+      </a>
+    </li>
+    <li>
+      <a class="next-btn btn-gray"
+        ng-class="{'disabled': page >= pages }"
+        ng-click="page = min(pages, page + 1)">
+        <i class="glyphicon chevron-right"></i>
+      </a>
+    </li>
+  </ul>
+  <h3>Recently Added</h3>
+
+  <div class="dashboard-list-container" ng-style="positionStyle">
+    <ul class="tile-list media-tile-list horizontal-media-tile-list" ng-style="listWidthStyle">
+        <li class="poster-item media-tile-list-item" ng-repeat="item in recentlyAdded"ng-controller="RecentlyAddedItemCtrl" ng-include="item.template">
+
+        </li>
+    </ul>
+
+
+  </div>
+</div>

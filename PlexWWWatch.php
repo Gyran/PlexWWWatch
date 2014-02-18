@@ -1,5 +1,52 @@
 <?php
 require_once("plex-watch/PlexWatch.php");
+require_once("plex/Plex.php");
+
+class PlexWWWatchSettings {
+    public function __construct($file) {
+
+    }
+
+    public function check($settings) {
+
+    }
+
+    private function _load() {
+        $json = file_get_contents($this->_file);
+        if ($json) {
+            $settings = json_decode($file, true);
+            $this->_settings = $settings;
+        }
+    }
+
+    private function _save() {
+        file_put_contents($this->_file, json_encode($this->_settings));
+    }
+
+    private $_settings = [
+        "plexWatch" => [
+            "dbFile" => "",
+            "grouped" => ""
+        ],
+        "plex" => [
+            "token" => "",
+            "remoteProtocol" => "http",
+            "remoteAddress" => "",
+            "remotePort" => 32400,
+            "localProtocol" => "http",
+            "localAddress" => "127.0.0.1",
+            "localPost" => 32400
+        ],
+        "plexWWWatch" => [
+            "storeImages" => false,
+            "requireAuth" => false,
+            "requireAuthSettings" => false
+        ]
+    ];
+
+    //
+    private $_file = "";
+}
 
 class PlexWWWatch {
     private static $SETTINGS_FILE = "/settings/settings";
@@ -13,6 +60,20 @@ class PlexWWWatch {
             }
         }
         return $this->_plexWatch;
+    }
+
+    public function plex() {
+        if (!$this->_plex) {
+            $settings = $this->settings();
+
+            if ($settings->plexMediaServerHost !== "") {
+                $host = $settings->plexMediaServerHost;
+                $token = isset($settings->myPlexToken) ? $settings->myPlexToken : "";
+                $local = "";
+                $this->_plex = new Plex($host, $local, $token);
+            }
+        }
+        return $this->_plex;
     }
 
     public function settings() {
@@ -111,6 +172,7 @@ class PlexWWWatch {
         $this->_settings = $settings;
     }
 
+    private $_plex = null;
     private $_plexWatch = null;
     private $_settings = null;
 }
