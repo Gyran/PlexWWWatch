@@ -75,12 +75,7 @@ class PlexWWWatch {
     }
 
     public function saveSettings ($settingsIn) {
-        $settings = (object)[
-            "dbPath" => "",
-            "plexMediaServerHost" => "",
-            "grouped" => false
-        ];
-
+        $settings = $this->settings();
 
         if (isset($settingsIn->dbPath)) {
             $settings->dbPath = $settingsIn->dbPath;
@@ -92,25 +87,25 @@ class PlexWWWatch {
             $settings->grouped = $settingsIn->grouped;
         }
 
-        //$check = $this->checkSettings($settings);
-
-        //if (!empty($check)) {
-            //echo "ERROR!";
-            //print_r($check);
-        //} else {
-            //file_put_contents(__DIR__ . self::$SETTINGS_FILE, json_encode($settings));
-        //}
         if ($settings) {
             file_put_contents(__DIR__ . self::$SETTINGS_FILE, json_encode($settings));
         }
         return $settings;
     }
 
+    private function _emptySettings () {
+        return (object)[
+            "dbPath" => "",
+            "plexMediaServerHost" => "",
+            "grouped" => ""
+        ];
+    }
+
     private function _readSettings () {
         if (file_exists(__DIR__ . self::$SETTINGS_FILE)) {
             $settings = json_decode(file_get_contents(__DIR__ . self::$SETTINGS_FILE));
         } else {
-            $settings = null;
+            $settings = $this->_emptySettings();
         }
 
         $this->_settings = $settings;

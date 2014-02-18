@@ -91,15 +91,17 @@ angular.module("plex-wwwatch",
         .otherwise({ redirectTo: "/check" })
         ;
 }])
-.run(function ($rootScope, PWWWService, localStorageService, $location) {
+.run(function ($rootScope, PWWWService, localStorageService, $location, myPlex) {
     PWWWService.getSettings().then(function (settings) {
         $rootScope.settings = settings;
     }, function () {
         $location.path("/check");
     });
 
+    myPlex.init();
+
     $rootScope.plex = {
-        token: localStorageService.get("plexToken")
+        token: myPlex.token()
     };
 })
 ;

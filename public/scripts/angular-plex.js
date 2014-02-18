@@ -3,24 +3,57 @@ angular.module("plex",
         "base64",
         "LocalStorageModule"
     ])
-.service("myPlex", function ($http, $base64, $q) {
-    var user = {};
-    var signedin = false;
+.service("myPlex", function ($http, $base64, $q, localStorageService) {
+    var user = null;
+    var pmsHost = "";
 
-    this.token = function (username, password) {
+    this.init = function (pms) {
+        user = localStorageService.get("myPlexUser");
+        pmsHost = pms;
+    };
+
+    this.signin = function (username, password, remember) {
+        var deferred = $q.defer();
+        _signin(username, password).then(function (plexUser) {
+            user = plexUser;
+            if (remember) {
+                localStorageService.add("myPlexUser", user);
+            }
+            deferred.resolve();
+        }, function (err) {
+            deferred.reject(err);
+        });
+
+        return deferred.promise;
+    };
+
+    this.token = function () {
+        if (!user) {
+            return null;
+        }
+        return user.authentication_token;
+    };
+
+    this.recentlyAdded = function (pmshost) {
+        if (!user) {
+            return null;
+        }
+
         var deferred = $q.defer();
 
-        if (user.authentication_token) {
-            deferred.resolve(user.authentication_token);
-        } else if (username && password) {
-            _signin(username, password).then(function () {
-                deferred.resolve(user.authentication_token);
-            }, function (reason) {
-                deferred.reject(reason);
-            });
-        } else {
-            deferred.reject("No token found and no username and password supplied");
-        }
+        var headers = {
+            "X-Plex-Client-Identifier": "PlexWWWatch Client",
+            "X-Plex-Product": "PlexWWWatch",
+            "X-Plex-Version": "0.1"
+        };
+
+        $http.get(pmsHost + "/library/recentlyAdded.json", {
+            headers: headers
+        }).success(function (data) {
+            console.log(data);
+        }).error(function (error) {
+            console.log(error);
+        });
 
         return deferred.promise;
     };
@@ -39,13 +72,12 @@ angular.module("plex",
         $http.post(url, null, {
             headers: {
                 "Authorization": auth,
-                "X-Plex-Client-Identifier": "PlexWWWatch",
-                "X-Plex-Product": "Web Client",
+                "X-Plex-Client-Identifier": "PlexWWWatch Client",
+                "X-Plex-Product": "PlexWWWatch",
                 "X-Plex-Version": "0.1"
             }
         }).success(function (data) {
-            user = data.user;
-            deferred.resolve();
+            deferred.resolve(data);
         }).error(function (error) {
             deferred.reject(error.error);
         });
@@ -63,6 +95,13 @@ function PlexCtrl ($scope, $rootScope, localStorageService, myPlex) {
 
     $scope.signin = function () {
         $scope.error = false;
+        myPlex.signin($scope.username, $scope.password, $scope.remember).then(function () {
+            console.log("wiie");
+        }, function (error) {
+            $scope.error = error;
+        });
+
+        /*
         myPlex.token($scope.username, $scope.password).then(function (token) {
             $rootScope.plex.token = token;
 
@@ -73,6 +112,7 @@ function PlexCtrl ($scope, $rootScope, localStorageService, myPlex) {
         }, function (error) {
             $scope.error = error;
         });
+        */
 
         $scope.password = "";
     };
