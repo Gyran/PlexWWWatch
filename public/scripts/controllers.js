@@ -37,21 +37,7 @@ function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams, PlexWatch) 
 
 function WatchedRowCtrl ($scope) {
     (function () {
-        var setThumb = function () {
-            var thumb = "img/poster.png";
-            if ($scope.w.thumb !== "") {
-                thumb = $scope.settings.plexMediaServerHost + $scope.w.thumb;
-                if ($scope.plex.token) {
-                    thumb = thumb + "?X-Plex-Token=" + $scope.plex.token;
-                }
-            }
-            $scope.w.thumbsrc = thumb;
-        };
-
-        $scope.$watch("plex.token", function () {
-            setThumb();
-        });
-
+        $scope.w.thumbsrc = "backend/image.php?width=100&height=145&url=" + $scope.w.thumb;
     })();
 
     (function () {
@@ -72,31 +58,39 @@ function SettingsCtrl ($scope, $rootScope, $location, PWWWService) {
     $scope.containers = [
         {
             title: "PlexWWWatch",
-            sections: ["General"],
             template: "partials/settings/PlexWWWatch.html",
-            selected: 0
         },
         {
             title: "Plex Watch",
-            sections: ["General"],
             template: "partials/settings/PlexWatch.html",
-            selected: 0
-        }
+        },
+        {
+            title: "Plex",
+            template: "partials/settings/Plex.html",
+        },
+
     ];
-    $scope.current = 0;
+    $scope.current = 1;
     $scope.loading = false;
 
     $scope.select = function (index) {
         $scope.current = index;
     };
 
+    $scope.newSettings = {
+        plex: {},
+        plexWatch: {},
+        plexWWWatch: {}
+    };
+
+    PWWWService.settings.all().then(function (settings) {
+        $scope.newSettings = settings;
+    });
+
     $scope.save = function (settings) {
         $scope.loading = true;
-        PWWWService.saveSettings(settings).then(function (settings) {
-            $rootScope.settings = settings;
+        PWWWService.settings.save(settings).then(function (settings) {
             $scope.loading = false;
-        }, function () {
-            $location.path("/check");
         });
     };
 }
@@ -236,10 +230,10 @@ function CheckCtrl ($scope, $location, PWWWService) {
     });
 }
 
-function RecentlyAddedCtrl ($scope, PWWWService) {
+function RecentlyAddedCtrl ($scope, $window, PWWWService) {
     var itemWidth = 174;
     var listWidth = 0;
-    var stepSize = 1000;
+    var stepSize = $window.innerWidth * 0.9;
 
     $scope.positionStyle = {
         "-webkit-transform": "translate(0, 0)"
@@ -291,7 +285,7 @@ function RecentlyAddedItemCtrl ($scope) {
     })();
 
     (function () {
-        $scope.item.thumbsrc = "backend/art.php?thumb=" + $scope.item.thumb;
+        $scope.item.thumbsrc = "backend/image.php?width=150&height=225&url=" + $scope.item.thumb;
     })();
 
 }

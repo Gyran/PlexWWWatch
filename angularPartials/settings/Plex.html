@@ -1,0 +1,19 @@
+<div class="form-group">
+  <label for="plexRemote">Remote Plex Media Server</label>
+  <input type="text" id="plexRemote" class="form-control" ng-model="newSettings.plex.remote">
+  <p class="help-block">
+    Hostname for your Plex Media Server, accessible from your web server.
+    <br>
+    If you have the Plex Media Server on the same server as PlexWWWatch it is probably "http://localhost:32400".
+  </p>
+</div>
+
+<div class="form-group">
+  <label for="plexLocal">Local Plex Media Server</label>
+  <input type="text" id="plexLocal" class="form-control" ng-model="newSettings.plex.local">
+  <p class="help-block">
+    Hostname for your Plex Media Server, accessible from your Plex Media Server.
+    <br>
+    If you haven't done any special settings it's probably "http://127.0.0.1:32400".
+  </p>
+</div>

@@ -14,24 +14,57 @@ angular.module("plex",
         "base64",
         "LocalStorageModule"
     ])
-.service("myPlex", function ($http, $base64, $q) {
-    var user = {};
-    var signedin = false;
+.service("myPlex", function ($http, $base64, $q, localStorageService) {
+    var user = null;
+    var pmsHost = "";
 
-    this.token = function (username, password) {
+    this.init = function (pms) {
+        user = localStorageService.get("myPlexUser");
+        pmsHost = pms;
+    };
+
+    this.signin = function (username, password, remember) {
+        var deferred = $q.defer();
+        _signin(username, password).then(function (plexUser) {
+            user = plexUser;
+            if (remember) {
+                localStorageService.add("myPlexUser", user);
+            }
+            deferred.resolve();
+        }, function (err) {
+            deferred.reject(err);
+        });
+
+        return deferred.promise;
+    };
+
+    this.token = function () {
+        if (!user) {
+            return null;
+        }
+        return user.authentication_token;
+    };
+
+    this.recentlyAdded = function (pmshost) {
+        if (!user) {
+            return null;
+        }
+
         var deferred = $q.defer();
 
-        if (user.authentication_token) {
-            deferred.resolve(user.authentication_token);
-        } else if (username && password) {
-            _signin(username, password).then(function () {
-                deferred.resolve(user.authentication_token);
-            }, function (reason) {
-                deferred.reject(reason);
-            });
-        } else {
-            deferred.reject("No token found and no username and password supplied");
-        }
+        var headers = {
+            "X-Plex-Client-Identifier": "PlexWWWatch Client",
+            "X-Plex-Product": "PlexWWWatch",
+            "X-Plex-Version": "0.1"
+        };
+
+        $http.get(pmsHost + "/library/recentlyAdded.json", {
+            headers: headers
+        }).success(function (data) {
+            console.log(data);
+        }).error(function (error) {
+            console.log(error);
+        });
 
         return deferred.promise;
     };
@@ -50,13 +83,12 @@ angular.module("plex",
         $http.post(url, null, {
             headers: {
                 "Authorization": auth,
-                "X-Plex-Client-Identifier": "PlexWWWatch",
-                "X-Plex-Product": "Web Client",
+                "X-Plex-Client-Identifier": "PlexWWWatch Client",
+                "X-Plex-Product": "PlexWWWatch",
                 "X-Plex-Version": "0.1"
             }
         }).success(function (data) {
-            user = data.user;
-            deferred.resolve();
+            deferred.resolve(data);
         }).error(function (error) {
             deferred.reject(error.error);
         });
@@ -74,6 +106,13 @@ function PlexCtrl ($scope, $rootScope, localStorageService, myPlex) {
 
     $scope.signin = function () {
         $scope.error = false;
+        myPlex.signin($scope.username, $scope.password, $scope.remember).then(function () {
+            console.log("wiie");
+        }, function (error) {
+            $scope.error = error;
+        });
+
+        /*
         myPlex.token($scope.username, $scope.password).then(function (token) {
             $rootScope.plex.token = token;
 
@@ -84,6 +123,7 @@ function PlexCtrl ($scope, $rootScope, localStorageService, myPlex) {
         }, function (error) {
             $scope.error = error;
         });
+        */
 
         $scope.password = "";
     };
@@ -110,7 +150,7 @@ angular.module("plex-wwwatch",
         "LocalStorageModule",
         "ngPlexWatch"
     ])
-.service("PWWWService", function ($http, $q) {
+.service("PWWWService", function ($http, $q, $resource) {
     this.check = function () {
         var deferred = $q.defer();
         $http.get("backend/check.php").success(function (data) {
@@ -123,6 +163,41 @@ angular.module("plex-wwwatch",
 
         return deferred.promise;
     };
+
+    this.recentlyAdded = $resource("backend/recentlyAdded.php");
+
+    this.settings = {
+        all: function () {
+            var deferred = $q.defer();
+            $http.get("backend/settings.php?all").success(function (data) {
+                deferred.resolve(data);
+            });
+
+            return deferred.promise;
+        },
+        save: function (settings) {
+            var deferred = $q.defer();
+            $http.post("backend/settings.php", settings).success(function () {
+                deferred.resolve();
+            });
+
+            return deferred.promise;
+        }
+    };
+
+
+
+
+/*
+    this.recentlyAdded = function () {
+        var deferred = $q.defer();
+        $http.get("backend/recentlyAdded.php").success(function (data) {
+            deferred.resolve(data);
+        });
+
+        return deferred.promise;
+    };
+*/
 
     this.getSettings = function () {
         var deferred = $q.defer();
@@ -180,26 +255,20 @@ angular.module("plex-wwwatch",
             controller: "UserCtrl",
             templateUrl: "partials/user.html"
         })
-        .when("/plex", {
-            controller: "PlexCtrl",
-            templateUrl: "partials/plex.html"
-        })
-        .when("/check", {
-            controller: "CheckCtrl",
-            templateUrl: "partials/check.html"
-        })
-        .otherwise({ redirectTo: "/check" })
+        .otherwise({ redirectTo: "/home" })
         ;
 }])
-.run(function ($rootScope, PWWWService, localStorageService, $location) {
+.run(function ($rootScope, PWWWService, localStorageService, $location, myPlex) {
     PWWWService.getSettings().then(function (settings) {
         $rootScope.settings = settings;
     }, function () {
         $location.path("/check");
     });
 
+    myPlex.init();
+
     $rootScope.plex = {
-        token: localStorageService.get("plexToken")
+        token: myPlex.token()
     };
 })
 ;
@@ -245,21 +314,7 @@ function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams, PlexWatch) 
 
 function WatchedRowCtrl ($scope) {
     (function () {
-        var setThumb = function () {
-            var thumb = "img/poster.png";
-            if ($scope.w.thumb !== "") {
-                thumb = $scope.settings.plexMediaServerHost + $scope.w.thumb;
-                if ($scope.plex.token) {
-                    thumb = thumb + "?X-Plex-Token=" + $scope.plex.token;
-                }
-            }
-            $scope.w.thumbsrc = thumb;
-        };
-
-        $scope.$watch("plex.token", function () {
-            setThumb();
-        });
-
+        $scope.w.thumbsrc = "backend/image.php?width=100&height=145&url=" + $scope.w.thumb;
     })();
 
     (function () {
@@ -280,31 +335,39 @@ function SettingsCtrl ($scope, $rootScope, $location, PWWWService) {
     $scope.containers = [
         {
             title: "PlexWWWatch",
-            sections: ["General"],
             template: "partials/settings/PlexWWWatch.html",
-            selected: 0
         },
         {
             title: "Plex Watch",
-            sections: ["General"],
             template: "partials/settings/PlexWatch.html",
-            selected: 0
-        }
+        },
+        {
+            title: "Plex",
+            template: "partials/settings/Plex.html",
+        },
+
     ];
-    $scope.current = 0;
+    $scope.current = 1;
     $scope.loading = false;
 
     $scope.select = function (index) {
         $scope.current = index;
     };
 
+    $scope.newSettings = {
+        plex: {},
+        plexWatch: {},
+        plexWWWatch: {}
+    };
+
+    PWWWService.settings.all().then(function (settings) {
+        $scope.newSettings = settings;
+    });
+
     $scope.save = function (settings) {
         $scope.loading = true;
-        PWWWService.saveSettings(settings).then(function (settings) {
-            $rootScope.settings = settings;
+        PWWWService.settings.save(settings).then(function (settings) {
             $scope.loading = false;
-        }, function () {
-            $location.path("/check");
         });
     };
 }
@@ -442,6 +505,66 @@ function CheckCtrl ($scope, $location, PWWWService) {
     }, function (err) {
         $scope.errors = err;
     });
+}
+
+function RecentlyAddedCtrl ($scope, $window, PWWWService) {
+    var itemWidth = 174;
+    var listWidth = 0;
+    var stepSize = $window.innerWidth * 0.9;
+
+    $scope.positionStyle = {
+        "-webkit-transform": "translate(0, 0)"
+    };
+    $scope.listWidthStyle = {
+        width: 0
+    };
+
+    $scope.page = 1;
+    $scope.pages = 1;
+    $scope.items = [];
+
+    $scope.recentlyAdded = PWWWService.recentlyAdded.query({}, function (data) {
+        listWidth = data.length * itemWidth;
+        $scope.pages = Math.ceil(listWidth / stepSize);
+        $scope.page = 1;
+
+        $scope.items = data;
+        $scope.listWidthStyle = {
+            width: listWidth + "px"
+        };
+
+    });
+
+    $scope.$watch("page", function () {
+        var xpos = "-" + ( ($scope.page - 1) * stepSize);
+        $scope.positionStyle = {
+            "-webkit-transform": "translate(" + xpos + "px, 0)"
+        };
+    });
+
+    $scope.min = Math.min;
+    $scope.max = Math.max;
+
+}
+
+function RecentlyAddedItemCtrl ($scope) {
+    (function () {
+        var templates = {
+            "season": "partials/recentlyAdded/season.html",
+            "movie": "partials/recentlyAdded/movie.html"
+        };
+        var template = "partials/recentlyAdded/item.html";
+
+        if (templates.hasOwnProperty($scope.item.type)) {
+            template = templates[$scope.item.type];
+        }
+        $scope.item.template = template;
+    })();
+
+    (function () {
+        $scope.item.thumbsrc = "backend/image.php?width=150&height=225&url=" + $scope.item.thumb;
+    })();
+
 }
 
 angular.module("plex-wwwatch")

@@ -26,6 +26,28 @@ angular.module("plex-wwwatch",
 
     this.recentlyAdded = $resource("backend/recentlyAdded.php");
 
+    this.settings = {
+        all: function () {
+            var deferred = $q.defer();
+            $http.get("backend/settings.php?all").success(function (data) {
+                deferred.resolve(data);
+            });
+
+            return deferred.promise;
+        },
+        save: function (settings) {
+            var deferred = $q.defer();
+            $http.post("backend/settings.php", settings).success(function () {
+                deferred.resolve();
+            });
+
+            return deferred.promise;
+        }
+    };
+
+
+
+
 /*
     this.recentlyAdded = function () {
         var deferred = $q.defer();
@@ -93,15 +115,7 @@ angular.module("plex-wwwatch",
             controller: "UserCtrl",
             templateUrl: "partials/user.html"
         })
-        .when("/plex", {
-            controller: "PlexCtrl",
-            templateUrl: "partials/plex.html"
-        })
-        .when("/check", {
-            controller: "CheckCtrl",
-            templateUrl: "partials/check.html"
-        })
-        .otherwise({ redirectTo: "/check" })
+        .otherwise({ redirectTo: "/home" })
         ;
 }])
 .run(function ($rootScope, PWWWService, localStorageService, $location, myPlex) {

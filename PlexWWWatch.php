@@ -2,40 +2,73 @@
 require_once("plex-watch/PlexWatch.php");
 require_once("plex/Plex.php");
 
-class PlexWWWatchSettings {
+class PlexWWWatchSettings implements JsonSerializable {
     public function __construct($file) {
+        $this->_file = $file;
+        $this->_load();
+    }
 
+    public function settings() {
+        return $this->_settings;
+    }
+
+    public function save($newSettings) {
+        $settings = $this->_populate($newSettings);
+        $this->_save($settings);
+    }
+
+    private function _populate($newSettings) {
+        $settings = $this->_default;
+
+        if ($newSettings) {
+            foreach ($this->_default as $category => $fields) {
+                if (!isset($newSettings[$category])) {
+                    continue;
+                }
+
+                foreach ($fields as $field => $default) {
+                    $value = $default;
+                    if (isset($newSettings[$category][$field])) {
+                        $value = $newSettings[$category][$field];
+                    }
+                    $settings[$category][$field] = $value;
+                }
+            }
+        }
+
+        return $settings;
     }
 
     public function check($settings) {
 
     }
 
+    public function jsonSerialize() {
+        return $this->settings();
+    }
+
     private function _load() {
-        $json = file_get_contents($this->_file);
-        if ($json) {
-            $settings = json_decode($file, true);
-            $this->_settings = $settings;
+        $json = @file_get_contents($this->_file);
+        if ($json && $settings = json_decode($json, true)) {
+            $this->_settings = $this->_populate($settings);
+        } else {
+            $this->_settings = $this->_default;
         }
     }
 
-    private function _save() {
-        file_put_contents($this->_file, json_encode($this->_settings));
+    private function _save($settings) {
+        file_put_contents($this->_file, json_encode($settings));
     }
 
-    private $_settings = [
+    private $_default = [
         "plexWatch" => [
-            "dbFile" => "",
-            "grouped" => ""
+            "dbFile" => "/opt/plexWatch/plexWatch.db",
+            "grouped" => false
         ],
         "plex" => [
             "token" => "",
-            "remoteProtocol" => "http",
-            "remoteAddress" => "",
-            "remotePort" => 32400,
-            "localProtocol" => "http",
-            "localAddress" => "127.0.0.1",
-            "localPost" => 32400
+            "remote" => "http://localhost:32400",
+            "local" => "http://127.0.0.1:32400",
         ],
         "plexWWWatch" => [
             "storeImages" => false,
@@ -44,8 +77,7 @@ class PlexWWWatchSettings {
         ]
     ];
 
-    //
-    private $_file = "";
+    private $_file;
 }
 
 class PlexWWWatch {
@@ -53,35 +85,31 @@ class PlexWWWatch {
 
     public function plexWatch() {
         if (!$this->_plexWatch) {
-            $settings = $this->settings();
-
-            if ($settings) {
-                $this->_plexWatch = new PlexWatch($settings->dbPath, $settings->grouped);
-            }
+            $settings = $this->getSettings("plexWatch");
+            $this->_plexWatch = new PlexWatch($settings["dbFile"], $settings["grouped"]);
         }
         return $this->_plexWatch;
     }
 
     public function plex() {
         if (!$this->_plex) {
-            $settings = $this->settings();
+            $settings = $this->getSettings("plex");
 
-            if ($settings->plexMediaServerHost !== "") {
-                $host = $settings->plexMediaServerHost;
-                $token = isset($settings->myPlexToken) ? $settings->myPlexToken : "";
-                $local = "";
-                $this->_plex = new Plex($host, $local, $token);
-            }
+            $this->_plex = new Plex($settings["remote"], $settings["local"], $settings["token"]);
         }
         return $this->_plex;
     }
 
-    public function settings() {
-        if (!$this->_settings) {
-            $this->_readSettings();
+    public function getSettings($what = "") {
+        $settings = $this->settings();
+        if ($what !== "") {
+            return $settings->settings()[$what];
         }
+        return $settings->settings();
+    }
 
-        return $this->_settings;
+    public function saveSettings($settings) {
+        $this->settings()->save($settings);
     }
 
     public function check() {
@@ -107,69 +135,15 @@ class PlexWWWatch {
         return $ret;
     }
 
-    public function checkSettings($settings = null) {
-        $ret = [];
-        if ($settings === null) {
-            $settings = $this->settings();
-        }
-
-        $validFields = ["dbPath", "plexMediaServerHost", "grouped", "correct", "plexMediaServerHostCorrect", "dbPathCorrect"];
-        if ($settings) {
-            foreach (get_object_vars($settings) as $key => $value) {
-                if (!in_array($key, $validFields)) {
-                    $ret[] = "Key [" . $key . "] is not permitted";
-                }
-            }
-        }
-
-        if (!isset($settings->dbPath) || $settings->dbPath === "") {
-            $ret[] = "You must specify a dbPath";
-        } else if (!is_readable($settings->dbPath)) {
-            $ret[] = "Your database file must be readable";
-        }
-
-        if (!isset($settings->plexMediaServerHost) || $settings->plexMediaServerHost === "") {
-            $ret[] = "You must specify a host to you Plex Media Server";
-        }
-
-        return $ret;
+    public function checkSettings() {
+        return $this->settings()->check();
     }
 
-    public function saveSettings ($settingsIn) {
-        $settings = $this->settings();
-
-        if (isset($settingsIn->dbPath)) {
-            $settings->dbPath = $settingsIn->dbPath;
+    private function settings() {
+        if (!$this->_settings) {
+            $this->_settings = new PlexWWWatchSettings(__DIR__ . self::$SETTINGS_FILE);
         }
-        if (isset($settingsIn->plexMediaServerHost)) {
-            $settings->plexMediaServerHost = $settingsIn->plexMediaServerHost;
-        }
-        if (isset($settingsIn->grouped)) {
-            $settings->grouped = $settingsIn->grouped;
-        }
-
-        if ($settings) {
-            file_put_contents(__DIR__ . self::$SETTINGS_FILE, json_encode($settings));
-        }
-        return $settings;
-    }
-
-    private function _emptySettings () {
-        return (object)[
-            "dbPath" => "",
-            "plexMediaServerHost" => "",
-            "grouped" => ""
-        ];
-    }
-
-    private function _readSettings () {
-        if (file_exists(__DIR__ . self::$SETTINGS_FILE)) {
-            $settings = json_decode(file_get_contents(__DIR__ . self::$SETTINGS_FILE));
-        } else {
-            $settings = $this->_emptySettings();
-        }
-
-        $this->_settings = $settings;
+        return $this->_settings;
     }
 
     private $_plex = null;

@@ -1,38 +1,32 @@
 <div class="container">
-  <ul class="nav nav-header pull-right">
-    <li ng-repeat="container in containers" class="">
-      <a href ng-click="select($index)"
-        class="btn-gray" ng-class="{ 'selected': current == $index }">
-        {{ container.title }}
-      </a>
-    </li>
-  </ul>
-
   <h3>Settings</h3>
 
   <div class="settings-container">
     <div class="row">
       <div class="col-md-3">
         <ul class="settings-nav nav nav-stacked nav-sidebar">
-          <li ng-repeat="section in containers[current].sections">
-            <a class="btn-gray" href ng-click="containers[current].selected = $index"
-              ng-class="{ 'selected': containers[current].selected == $index }">
-                {{ section }}
+          <li ng-repeat="container in containers">
+            <a class="btn-gray" href ng-click="select($index)"
+              ng-class="{ 'selected': current == $index }">
+                {{ container.title }}
             </a>
           </li>
         </ul>
       </div>
 
       <div class="col-md-9">
-        <div ng-include="containers[current].template">
-        </div>
-        <div class="form-footer">
-        <button type="submit" class="submit-btn btn btn-lg btn-primary btn-loading" ng-class="{'active': loading}" ng-click="save(settings)">
-          <div class="loading loading-sm"></div>
-          <span class="btn-label">Save Changes</span>
-        </button>
+        <form>
+          <ng-include src="containers[current].template">
+          </ng-include>
 
-        <span class="form-message"></span>
+          <div class="form-footer">
+            <button type="submit" class="submit-btn btn btn-lg btn-primary btn-loading" ng-class="{'active': loading}" ng-click="save(newSettings)">
+              <div class="loading loading-sm"></div>
+              <span class="btn-label">Save Changes</span>
+            </button>
+            <span class="form-message"></span>
+          </div>
+        </form>
       </div>
       </div>
     </div>

@@ -3,9 +3,9 @@ require_once("PlexDirectory.php");
 require_once("PlexVideo.php");
 
 class Plex {
-    function __construct($remotepms, $localpms, $token) {
-        $this->_remotepms = $remotepms;
-        $this->_localpms = $localpms;
+    function __construct($remote, $local, $token) {
+        $this->_remote = $remote;
+        $this->_local = $local;
         $this->_token = $token;
     }
 
@@ -21,8 +21,6 @@ class Plex {
     }
 
     function recentlyAdded() {
-        $context = $this->_context();
-
         $ret = $this->_get("/library/recentlyAdded");
         if (!$ret) {
             return [];
@@ -46,20 +44,20 @@ class Plex {
         return $recentlyAdded;
     }
 
-    function thumb($thumb) {
+    function image($url, $width, $height) {
         header("Content-type: image/jpeg");
-        $url = $this->_localpms . $thumb;
-        $image = $this->_get("/photo/:/transcode?width=150&height=225&minSize=1&url=" . $url);
+
+        $url = $this->_local . $url;
+        $str = sprintf("/photo/:/transcode?width=%d&height=%d&minSize=1&url=%s", $width, $height, $url);
+        $image = $this->_get($str);
         if ($image) {
             echo $image;
-        } else {
-            //echo file_get_contents(__DIR__ . "/../public/img/poster.png");
         }
     }
 
     function _get($url) {
         $context = $this->_context();
-        $host = $this->_remotepms . $url;
+        $host = $this->_remote . $url;
 
         return @file_get_contents($host, false, $context);
     }
@@ -82,8 +80,8 @@ class Plex {
         return stream_context_create($opts);
     }
 
-    private $_remotepms;
-    private $_localpms;
+    private $_remote;
+    private $_local;
     private $_token;
 }
 

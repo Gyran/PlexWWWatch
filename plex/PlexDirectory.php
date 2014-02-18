@@ -21,6 +21,11 @@ class PlexDirectory implements JsonSerializable {
         if (isset($xml["thumb"])) {
             $this->thumb = $xml["thumb"]->__toString();
         }
+
+        $this->addedAt = "";
+        if (isset($xml["addedAt"])) {
+            $this->addedAt = $xml["addedAt"]->__toString() * 1000;
+        }
     }
 
     public function jsonSerialize() {
@@ -33,7 +38,8 @@ class PlexDirectory implements JsonSerializable {
     }
 
     private $jsonFields = [
-        "type", "title", "parentTitle", "thumb"
+        "type", "title", "parentTitle", "thumb",
+        "addedAt"
     ];
 }
 

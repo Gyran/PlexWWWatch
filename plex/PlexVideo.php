@@ -21,6 +21,11 @@ class PlexVideo implements JsonSerializable {
         if (isset($xml["year"])) {
             $this->year = $xml["year"]->__toString();
         }
+
+        $this->addedAt = "";
+        if (isset($xml["addedAt"])) {
+            $this->addedAt = $xml["addedAt"]->__toString() * 1000;
+        }
     }
 
     public function jsonSerialize() {
@@ -33,7 +38,8 @@ class PlexVideo implements JsonSerializable {
     }
 
     private $jsonFields = [
-        "type", "title", "thumb", "year"
+        "type", "title", "thumb", "year",
+        "addedAt"
     ];
 }
 
