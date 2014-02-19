@@ -17,3 +17,25 @@
     If you haven't done any special settings it's probably "http://127.0.0.1:32400".
   </p>
 </div>
+
+<div class="form-group" ng-controller="FetchPlexTokenCtrl">
+  <h4>Plex Token</h4>
+  <label for="plexToken">Plex Token</label>
+  <input type="text" id="plexToken" class="form-control" ng-model="newSettings.plex.token" disabled="disabled">
+  <label for="myPlexUsername">Plex Username</label>
+  <input type="text" class="form-control" ng-model="myplex.username" id="myPlexUsername">
+  <label for="myPlexUsername">Plex Password</label>
+  <input type="password" class="form-control" ng-model="myplex.password" id="myPlexPassword">
+  <button class="btn btn-primary btn-xs" ng-click="fetch(myplex.username, myplex.password)">
+    <span class="btn-label">
+      Fetch token!
+    </span>
+  </button>
+  <p>
+    {{ myPlexMessage }}
+  </p>
+  <p class="help-block">
+    If you need authentication for local servers or if PlexWWWatch is not running on the same local network as your Plex Media Server a Plex token is required for authentication.<br>
+    To acquire a token, sign in to plex.tv above and click "FETCH TOKEN" (your username or password are never stored) and wait until the token apear in the token field. Then save the settings.
+  </p>
+</div>

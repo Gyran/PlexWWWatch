@@ -27,11 +27,16 @@ angular.module("plex",
         return deferred.promise;
     };
 
-    this.token = function () {
-        if (!user) {
-            return null;
-        }
-        return user.authentication_token;
+    this.token = function (username, password) {
+        var deferred = $q.defer();
+
+        _signin(username, password).then(function (user) {
+            deferred.resolve(user.authentication_token);
+        }, function (error) {
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
     };
 
     this.recentlyAdded = function (pmshost) {
@@ -77,7 +82,7 @@ angular.module("plex",
                 "X-Plex-Version": "0.1"
             }
         }).success(function (data) {
-            deferred.resolve(data);
+            deferred.resolve(data.user);
         }).error(function (error) {
             deferred.reject(error.error);
         });

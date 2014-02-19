@@ -125,11 +125,13 @@ angular.module("plex-wwwatch",
         $location.path("/check");
     });
 
+    /*
     myPlex.init();
 
     $rootScope.plex = {
         token: myPlex.token()
     };
+    */
 })
 ;
 

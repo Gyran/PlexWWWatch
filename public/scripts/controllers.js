@@ -70,8 +70,9 @@ function SettingsCtrl ($scope, $rootScope, $location, PWWWService) {
         },
 
     ];
-    $scope.current = 1;
+    $scope.current = 2;
     $scope.loading = false;
+    $scope.message = "";
 
     $scope.select = function (index) {
         $scope.current = index;
@@ -287,5 +288,16 @@ function RecentlyAddedItemCtrl ($scope) {
     (function () {
         $scope.item.thumbsrc = "backend/image.php?width=150&height=225&url=" + $scope.item.thumb;
     })();
+}
 
+function FetchPlexTokenCtrl ($scope, myPlex) {
+    $scope.fetch = function (username, password) {
+        $scope.myPlexMessage = "";
+        $scope.myplex.password = "";
+        myPlex.token(username, password).then(function (token) {
+            $scope.$parent.newSettings.plex.token = token;
+        }, function (error) {
+            $scope.myPlexMessage = error;
+        });
+    };
 }

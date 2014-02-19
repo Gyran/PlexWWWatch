@@ -38,11 +38,16 @@ angular.module("plex",
         return deferred.promise;
     };
 
-    this.token = function () {
-        if (!user) {
-            return null;
-        }
-        return user.authentication_token;
+    this.token = function (username, password) {
+        var deferred = $q.defer();
+
+        _signin(username, password).then(function (user) {
+            deferred.resolve(user.authentication_token);
+        }, function (error) {
+            deferred.reject(error);
+        });
+
+        return deferred.promise;
     };
 
     this.recentlyAdded = function (pmshost) {
@@ -88,7 +93,7 @@ angular.module("plex",
                 "X-Plex-Version": "0.1"
             }
         }).success(function (data) {
-            deferred.resolve(data);
+            deferred.resolve(data.user);
         }).error(function (error) {
             deferred.reject(error.error);
         });
@@ -265,11 +270,13 @@ angular.module("plex-wwwatch",
         $location.path("/check");
     });
 
+    /*
     myPlex.init();
 
     $rootScope.plex = {
         token: myPlex.token()
     };
+    */
 })
 ;
 
@@ -347,8 +354,9 @@ function SettingsCtrl ($scope, $rootScope, $location, PWWWService) {
         },
 
     ];
-    $scope.current = 1;
+    $scope.current = 2;
     $scope.loading = false;
+    $scope.message = "";
 
     $scope.select = function (index) {
         $scope.current = index;
@@ -564,7 +572,18 @@ function RecentlyAddedItemCtrl ($scope) {
     (function () {
         $scope.item.thumbsrc = "backend/image.php?width=150&height=225&url=" + $scope.item.thumb;
     })();
+}
 
+function FetchPlexTokenCtrl ($scope, myPlex) {
+    $scope.fetch = function (username, password) {
+        $scope.myPlexMessage = "";
+        $scope.myplex.password = "";
+        myPlex.token(username, password).then(function (token) {
+            $scope.$parent.newSettings.plex.token = token;
+        }, function (error) {
+            $scope.myPlexMessage = error;
+        });
+    };
 }
 
 angular.module("plex-wwwatch")
