@@ -19,6 +19,24 @@ class PlexWatchUserDetails extends PlexWatchUser {
 
         $this->jsonFields[] = "watched";
         $this->jsonFields[] = "intervalWatched";
+
+        // vars for calculation
+        $this->_thisDay = new DateTime("today");
+        $this->_prevDay = clone $this->_thisDay;
+        $this->_prevDay->sub(new DateInterval("P1D"));
+
+        // TODO have first day of week as sunday
+        $this->_thisWeek = new DateTime("next Monday -1 week");
+        $this->_prevWeek = clone $this->_thisWeek;
+        $this->_prevWeek->sub(new DateInterval("P1W"));
+
+        $this->_thisMonth = new DateTime("00:00 first day of this month");
+        $this->_prevMonth = clone $this->_thisMonth;
+        $this->_prevMonth->sub(new DateInterval("P1M"));
+
+        $this->_thisYear = new DateTime("first day of January");
+        $this->_prevYear = clone $this->_thisYear;
+        $this->_prevYear->sub(new DateInterval("P1Y"));
     }
 
     public function addWatched($watched) {
@@ -68,51 +86,34 @@ class PlexWatchUserDetails extends PlexWatchUser {
         $ts = new DateTime();
         $ts->setTimestamp($watched->time / 1000);
 
-        $thisDay = new DateTime("today");
-        $prevDay = clone $thisDay;
-        $prevDay->sub(new DateInterval("P1D"));
-
-        // TODO have first day of week as sunday
-        $thisWeek = new DateTime("next Monday -1 week");
-        $prevWeek = clone $thisWeek;
-        $prevWeek->sub(new DateInterval("P1W"));
-
-        $thisMonth = new DateTime("00:00 first day of this month");
-        $prevMonth = clone $thisMonth;
-        $prevMonth->sub(new DateInterval("P1M"));
-
-        $thisYear = new DateTime("first day of January");
-        $prevYear = clone $thisYear;
-        $prevYear->sub(new DateInterval("P1Y"));
-
-        if ($ts > $thisDay) {
+        if ($ts > $this->_thisDay) {
             $this->intervalWatched["0thisDay"]["watches"] += 1;
             $this->intervalWatched["0thisDay"]["timeWatched"] += $watched->timeWatched;
-        } else if ($ts > $prevDay) {
+        } else if ($ts > $this->_prevDay) {
             $this->intervalWatched["1prevDay"]["watches"] += 1;
             $this->intervalWatched["1prevDay"]["timeWatched"] += $watched->timeWatched;
         }
 
-        if ($ts > $thisWeek) {
+        if ($ts > $this->_thisWeek) {
             $this->intervalWatched["2thisWeek"]["watches"] += 1;
             $this->intervalWatched["2thisWeek"]["timeWatched"] += $watched->timeWatched;
-        } else if ($ts > $prevWeek) {
+        } else if ($ts > $this->_prevWeek) {
             $this->intervalWatched["3prevWeek"]["watches"] += 1;
             $this->intervalWatched["3prevWeek"]["timeWatched"] += $watched->timeWatched;
         }
 
-        if ($ts > $thisMonth) {
+        if ($ts > $this->_thisMonth) {
             $this->intervalWatched["4thisMonth"]["watches"] += 1;
             $this->intervalWatched["4thisMonth"]["timeWatched"] += $watched->timeWatched;
-        } else if ($ts > $prevMonth) {
+        } else if ($ts > $this->_prevMonth) {
             $this->intervalWatched["5prevMonth"]["watches"] += 1;
             $this->intervalWatched["5prevMonth"]["timeWatched"] += $watched->timeWatched;
         }
 
-        if ($ts > $thisYear) {
+        if ($ts > $this->_thisYear) {
             $this->intervalWatched["6thisYear"]["watches"] += 1;
             $this->intervalWatched["6thisYear"]["timeWatched"] += $watched->timeWatched;
-        } else if ($ts > $prevYear) {
+        } else if ($ts > $this->_prevYear) {
             $this->intervalWatched["7prevYear"]["watches"] += 1;
             $this->intervalWatched["7prevYear"]["timeWatched"] += $watched->timeWatched;
         }
