@@ -2,7 +2,8 @@
 require_once("PlexWatchWatched.php");
 
 class PlexWatchWatchedIterator implements Iterator {
-    public function __construct($statement) {
+    public function __construct($statement, $plexWatch = null) {
+        $this->_plexWatch = $plexWatch;
         $this->_statement = $statement;
         $this->_statement->execute();
     }
@@ -24,7 +25,7 @@ class PlexWatchWatchedIterator implements Iterator {
     public function next() {
         $res = $this->_statement->fetch(PDO::FETCH_ASSOC);
         if ($res) {
-            $this->_current = new PlexWatchWatched($res);
+            $this->_current = new PlexWatchWatched($res, $this->_plexWatch);
             $this->_counter += 1;
         } else {
             $this->_current = null;
@@ -38,6 +39,7 @@ class PlexWatchWatchedIterator implements Iterator {
     private $_counter;
     private $_statement;
     private $_current;
+    private $_plexWatch;
 }
 
 ?>

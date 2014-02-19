@@ -1,11 +1,12 @@
 <?php
 
 class PlexWatchWatched implements JsonSerializable {
-    public function __construct($dbrow) {
+    public function __construct($dbrow, $plexWatch = null) {
         $this->id               = $dbrow["id"];
         $this->sessionId        = $dbrow["session_id"];
         $this->time             = $dbrow["time"] * 1000;
         $this->user             = $dbrow["user"];
+        $this->userDisplay      = $this->user;
         $this->device           = $dbrow["platform"];
         $this->title            = $dbrow["title"];
         $this->origTitle        = $dbrow["orig_title"];
@@ -23,6 +24,10 @@ class PlexWatchWatched implements JsonSerializable {
         $this->ipAddress        = $dbrow["ip_address"];
 
         $this->_xml             = $dbrow["xml"];
+
+        if (isset($plexWatch)) {
+            $this->userDisplay = $plexWatch->userDisplayName($this->user, $this->device);
+        }
     }
 
     public function __get($p) {
@@ -120,13 +125,14 @@ class PlexWatchWatched implements JsonSerializable {
         "pausedCounter", "ipAddress", "thumb",
         "duration", "episode", "season", "viewOffset",
         "type", "viewOffset", "timeWatched", "duration",
-        "progress", "year"
+        "progress", "year", "userDisplay"
     );
 
     public $id;
     public $sessionId;
     public $time;
     public $user;
+    public $userDisplay;
     public $device;
     public $title;
     public $origTitle;

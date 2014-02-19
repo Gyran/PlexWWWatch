@@ -1,14 +1,19 @@
 <?php
 class PlexWatchUser implements JsonSerializable {
 
-    public function __construct($username) {
+    public function __construct($username, $plexWatch = null) {
         $this->name = $username;
+        $this->displayName = $this->name;
         $this->devices = array();
         $this->id = -1;
         $this->thumb = "";
         $this->totalWatched = ["watches" => 0, "timeWatched" => 0];
         $this->lastWatchedAt = 0;
         $this->types = array();
+
+        if (isset($plexWatch)) {
+            $this->displayName = $plexWatch->userDisplayName($username);
+        }
     }
 
     public function addWatched($watched) {
@@ -70,11 +75,12 @@ class PlexWatchUser implements JsonSerializable {
 
     protected $jsonFields = array(
         "id", "name", "devices", "thumb", "totalWatched",
-        "lastWatchedAt", "types"
+        "lastWatchedAt", "types", "displayName"
     );
 
     public $id;
     public $name;
+    public $displayName;
     public $devices;
     public $thumb;
     public $totalWatched;

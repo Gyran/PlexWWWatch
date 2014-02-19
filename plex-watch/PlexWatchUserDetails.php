@@ -2,8 +2,8 @@
 require_once("PlexWatchUser.php");
 
 class PlexWatchUserDetails extends PlexWatchUser {
-    public function __construct($username) {
-        parent::__construct($username);
+    public function __construct($username, $plexWatch = null) {
+        parent::__construct($username, $plexWatch);
 
         $this->watched = array();
         $this->intervalWatched = [

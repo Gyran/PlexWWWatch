@@ -22,7 +22,7 @@ class PlexWatch {
         foreach ($it as $watched) {
             $username = $watched->user;
             if (!isset($users[$username])) {
-                $users[$username] = new PlexWatchUser($username);
+                $users[$username] = new PlexWatchUser($username, $this);
             }
             $users[$username]->addWatched($watched);
         }
@@ -34,7 +34,7 @@ class PlexWatch {
         $config = [];
         $config["user"] = $username;
 
-        $user = new PlexWatchUserDetails($username);
+        $user = new PlexWatchUserDetails($username, $this);
 
         $it = $this->_watchedIterator($config);
         foreach ($it as $watched) {
@@ -42,6 +42,33 @@ class PlexWatch {
         }
 
         return $user;
+    }
+
+    public function settings() {
+        if (!$this->_settings) {
+            $statement = $this->_dbh->prepare("SELECT json FROM config");
+            $statement->execute();
+            $this->_settings = json_decode($statement->fetchColumn(), true);
+        }
+
+        return $this->_settings;
+    }
+
+    public function userDisplayName ($name, $device = "") {
+        if (!$this->_userDisplayNames) {
+            $this->_userDisplayNames = $this->settings()["user_display"];
+        }
+
+        if ($device !== "") {
+            if(isset($this->_userDisplayNames[$name . "+" . $device])) {
+                return $this->_userDisplayNames[$name . "+" . $device];
+            }
+        }
+
+        if (isset($this->_userDisplayNames[$name])) {
+            return $this->_userDisplayNames[$name];
+        }
+        return $name;
     }
 
     private function _watchedIterator($config = []) {
@@ -69,11 +96,7 @@ class PlexWatch {
             $statement->bindValue($b[0], $b[1], $b[2]);
         }
 
-        return new PlexWatchWatchedIterator($statement);
-    }
-
-    private function _watchedIteratorFromStatement($statement) {
-
+        return new PlexWatchWatchedIterator($statement, $this);
     }
 
     private function _getWatchedTable () {
@@ -85,6 +108,8 @@ class PlexWatch {
 
     private $_dbh;
     private $_grouped;
+    private $_userDisplayNames;
+    private $_settings;
 }
 
 
