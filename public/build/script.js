@@ -559,7 +559,8 @@ function RecentlyAddedItemCtrl ($scope) {
     (function () {
         var templates = {
             "season": "partials/recentlyAdded/season.html",
-            "movie": "partials/recentlyAdded/movie.html"
+            "movie": "partials/recentlyAdded/movie.html",
+            "album": "partials/recentlyAdded/album.html"
         };
         var template = "partials/recentlyAdded/item.html";
 

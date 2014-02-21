@@ -1,0 +1,9 @@
+<a class="media-poster-container">
+  <div class="media-poster">
+    <img ng-src="{{ item.thumbsrc }}" class="poster">
+  </div>
+
+  <div class="media-title media-heading">{{ item.title }}</div>
+  <div class="media-subtitle media-heading secondary">{{ item.parentTitle }}</div>
+  <div class="media-subtitle media-heading secondary"><span am-time-ago="item.addedAt"></span></div>
+</a>
