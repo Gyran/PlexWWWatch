@@ -70,7 +70,13 @@ class PlexWatchUserDetails extends PlexWatchUser {
             ];
 
             if (isset($watched->xml->Player["platform"])) {
-                $device["platform"] = $watched->xml->Player["platform"]->__toString();
+                $platform = $watched->xml->Player["platform"]->__toString();
+                if ($platform === "" &&
+                    preg_match("/^TV\s[A-Z][A-Z]?\d\d[A-Z][A-Z]?\d{3}/", $deviceName) === 1) {
+                    $platform = "Samsung";
+                }
+
+                $device["platform"] = $platform;
             }
 
             $this->devices[$deviceName] = $device;

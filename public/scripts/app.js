@@ -89,7 +89,8 @@ angular.module("plex-wwwatch",
             "Chrome": "device-icon-chrome",
             "Internet Explorer": "device-icon-ie",
             "iOS": "device-icon-ios",
-            "Android": "device-icon-android"
+            "Android": "device-icon-android",
+            "Samsung": "device-icon-samsung"
         },
         typeIcons: {
             "episode": "glyphicon display",
