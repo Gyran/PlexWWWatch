@@ -100,6 +100,10 @@ class PlexWWWatch {
         return $this->_plex;
     }
 
+    public function statistics() {
+        return $this->plexWatch()->statistics();
+    }
+
     public function getSettings($what = "") {
         $settings = $this->settings();
         if ($what !== "") {

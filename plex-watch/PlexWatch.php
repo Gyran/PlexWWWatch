@@ -3,6 +3,7 @@ require_once("PlexWatchWatched.php");
 require_once("PlexWatchWatchedIterator.php");
 require_once("PlexWatchUser.php");
 require_once("PlexWatchUserDetails.php");
+require_once("PlexWatchStatistics.php");
 
 class PlexWatch {
     function __construct($dbpath, $grouped = false) {
@@ -69,6 +70,17 @@ class PlexWatch {
             return $this->_userDisplayNames[$name];
         }
         return $name;
+    }
+
+    public function statistics () {
+        $statistics = new PlexWatchStatistics();
+
+        $it = $this->_watchedIterator();
+        foreach ($it as $watched) {
+            $statistics->addWatched($watched);
+        }
+
+        return $statistics;
     }
 
     private function _watchedIterator($config = []) {

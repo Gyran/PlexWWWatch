@@ -118,6 +118,12 @@ class PlexWatchWatched implements JsonSerializable {
         return $this->progress = $progress;
     }
 
+    private function get_dateTime() {
+        $this->dateTime = new DateTime();
+        $this->dateTime->setTimestamp($this->time / 1000);
+        return $this->dateTime;
+    }
+
     private $jsonFields = array(
         "id", "time", "title", "origTitle",
         "origTitleEp", "user", "device",

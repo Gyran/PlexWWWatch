@@ -45,8 +45,7 @@ angular.module("plex-wwwatch",
         }
     };
 
-
-
+    this.statistics = $resource("backend/statistics.php");
 
 /*
     this.recentlyAdded = function () {
@@ -115,6 +114,10 @@ angular.module("plex-wwwatch",
         .when("/users/:user", {
             controller: "UserCtrl",
             templateUrl: "partials/user.html"
+        })
+        .when("/statistics", {
+            controller: "StatisticsCtrl",
+            templateUrl: "partials/statistics.html"
         })
         .otherwise({ redirectTo: "/home" })
         ;

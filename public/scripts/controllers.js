@@ -302,3 +302,7 @@ function FetchPlexTokenCtrl ($scope, myPlex) {
         });
     };
 }
+
+function StatisticsCtrl ($scope, PWWWService) {
+    $scope.statistics = PWWWService.statistics.get();
+}
