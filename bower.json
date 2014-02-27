@@ -11,6 +11,11 @@
     "angular-route": "~1.2.12",
     "angular-moment": "~0.6.1",
     "angular-base64": "~2.0",
-    "angular-local-storage": "*"
+    "angular-local-storage": "*",
+    "angularjs-nvd3-directives": "~0.0.5-beta"
+  },
+  "resolutions": {
+    "angular": ">=1.0.0 <1.3.0",
+    "d3": "3.3.11"
   }
 }

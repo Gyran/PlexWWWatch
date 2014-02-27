@@ -8,7 +8,8 @@ angular.module("plex-wwwatch",
         "base64",
         "plex",
         "LocalStorageModule",
-        "ngPlexWatch"
+        "ngPlexWatch",
+        "nvd3ChartDirectives"
     ])
 .service("PWWWService", function ($http, $q, $resource) {
     this.check = function () {

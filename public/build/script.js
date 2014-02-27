@@ -153,7 +153,8 @@ angular.module("plex-wwwatch",
         "base64",
         "plex",
         "LocalStorageModule",
-        "ngPlexWatch"
+        "ngPlexWatch",
+        "nvd3ChartDirectives"
     ])
 .service("PWWWService", function ($http, $q, $resource) {
     this.check = function () {
@@ -190,8 +191,7 @@ angular.module("plex-wwwatch",
         }
     };
 
-
-
+    this.statistics = $resource("backend/statistics.php");
 
 /*
     this.recentlyAdded = function () {
@@ -260,6 +260,10 @@ angular.module("plex-wwwatch",
         .when("/users/:user", {
             controller: "UserCtrl",
             templateUrl: "partials/user.html"
+        })
+        .when("/statistics", {
+            controller: "StatisticsCtrl",
+            templateUrl: "partials/statistics.html"
         })
         .otherwise({ redirectTo: "/home" })
         ;
@@ -586,6 +590,122 @@ function FetchPlexTokenCtrl ($scope, myPlex) {
             $scope.myPlexMessage = error;
         });
     };
+}
+
+function StatisticsCtrl ($scope, $filter, PWWWService) {
+    $scope.selectedStats = "last30";
+
+    $scope.dayOfMonthData = {
+        watches: [],
+        time: []
+    };
+    $scope.hourOfDayData = {
+        watches: [],
+        time: []
+    };
+    $scope.dayOfWeekData = {
+        watches: [],
+        time: []
+    };
+    $scope.last30Data = {
+        watches: [],
+        time: []
+    };
+
+    $scope.integer = function (z) {
+        return Math.round(z);
+    };
+
+    $scope.duration = function (n) {
+        return $filter("duration")(n);
+    };
+
+    $scope.date = function (d) {
+        var m = moment.unix(d);
+        return m.format("MMM-DD");
+    };
+
+    $scope.statistics = PWWWService.statistics.get({}, function (data) {
+        var dayOfMonth = {
+            watches: [],
+            time: []
+        };
+        dayOfMonth.watches.push({
+            key: "Movies",
+            values: data.total.numWatches.dayOfMonth.movie
+        });
+        dayOfMonth.watches.push({
+            key: "Episodes",
+            values: data.total.numWatches.dayOfMonth.episode
+        });
+        dayOfMonth.time.push({
+            key: "Movies",
+            values: data.total.timeWatched.dayOfMonth.movie
+        });
+        dayOfMonth.time.push({
+            key: "Episodes",
+            values: data.total.timeWatched.dayOfMonth.episode
+        });
+        $scope.dayOfMonthData = dayOfMonth;
+
+        var hourOfDay = {
+            watches: [],
+            time: []
+        };
+        hourOfDay.watches.push({
+            key: "Movies",
+            values: data.total.numWatches.hourOfDay.movie
+        });
+        hourOfDay.watches.push({
+            key: "Episodes",
+            values: data.total.numWatches.hourOfDay.episode
+        });
+        $scope.hourOfDayData = hourOfDay;
+
+        var dayOfWeek = {
+            watches: [],
+            time: []
+        };
+        dayOfWeek.watches.push({
+            key: "Movies",
+            values: data.total.numWatches.dayOfWeek.movie
+        });
+        dayOfWeek.watches.push({
+            key: "Episodes",
+            values: data.total.numWatches.dayOfWeek.episode
+        });
+        dayOfWeek.time.push({
+            key: "Movies",
+            values: data.total.timeWatched.dayOfWeek.movie
+        });
+        dayOfWeek.time.push({
+            key: "Episodes",
+            values: data.total.timeWatched.dayOfWeek.episode
+        });
+        $scope.dayOfWeekData = dayOfWeek;
+
+        var last30 = {
+            watches: [],
+            time: []
+        };
+        last30.watches.push({
+            key: "Movies",
+            values: data.last30.numWatches.movie
+        });
+        last30.watches.push({
+            key: "Episodes",
+            values: data.last30.numWatches.episode
+        });
+        last30.time.push({
+            key: "Movies",
+            values: data.last30.timeWatched.movie
+        });
+        last30.time.push({
+            key: "Episodes",
+            values: data.last30.timeWatched.episode
+        });
+        $scope.last30Data = last30;
+    });
 }
 
 angular.module("plex-wwwatch")

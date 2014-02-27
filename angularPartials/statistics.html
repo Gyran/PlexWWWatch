@@ -1,8 +1,40 @@
-<nvd3-line-chart
-    data="statistics.numWatches.dayOfMonth"
-    width="600"
-    height="350"
-    >
-</nvd3-line-chart>
+<div class="container">
 
-{{statistics.numWatches.dayOfMonth}}
+  <ul class="nav nav-header pull-right">
+    <li>
+      <a href ng-click="selectedStats = 'last30'"
+        class="btn-gray" ng-class="{ 'selected': selectedStats == 'last30' }">
+        Last 30 days
+      </a>
+    </li>
+    <li>
+      <a href ng-click="selectedStats = 'watches'"
+        class="btn-gray" ng-class="{ 'selected': selectedStats == 'watches' }">
+        Watches
+      </a>
+    </li>
+    <li>
+      <a href ng-click="selectedStats = 'time'"
+        class="btn-gray" ng-class="{ 'selected': selectedStats == 'time' }">
+        Time Watched
+      </a>
+    </li>
+  </ul>
+
+  <h3>Statistics</h3>
+
+  <div class="row" ng-if="selectedStats == 'last30'">
+    <ng-include src="'partials/statistics/last30.html'"></ng-include>
+  </div>
+
+  <div class="row" ng-if="selectedStats == 'watches'">
+    <ng-include src="'partials/statistics/watches.html'"></ng-include>
+  </div>
+
+  <div class="row" ng-if="selectedStats == 'time'">
+    <ng-include src="'partials/statistics/time.html'"></ng-include>
+  </div>
+
+
+</div>
+

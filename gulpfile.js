@@ -19,7 +19,14 @@ var bowerScripts = [
     "./bower_components/moment/min/moment.min.js",
     "./bower_components/angular-local-storage/angular-local-storage.min.js",
     //"./bower_components/ng-table/ng-table.js",
-    "./bower_components/angular-base64/angular-base64.min.js"
+    "./bower_components/angular-base64/angular-base64.min.js",
+    "./bower_components/d3/d3.min.js",
+    "./bower_components/nvd3/nv.d3.min.js",
+    "./bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"
+];
+
+bowerStyles = [
+    "./bower_components/nvd3/nv.d3.min.css"
 ];
 
 gulp.task("angular", function () {
@@ -57,6 +64,9 @@ gulp.task("styles", function() {
 gulp.task("bower", function () {
     gulp.src(bowerScripts)
         .pipe(concat("bower.js"))
+        .pipe(gulp.dest("public/build"));
+    gulp.src(bowerStyles)
+        .pipe(concat("bower.css"))
         .pipe(gulp.dest("public/build"));
 });
 

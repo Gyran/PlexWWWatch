@@ -1,0 +1,42 @@
+<ul class="list card-list">
+
+  <li class="card-item card-2-col-item">
+    <div class="card">
+      <h4>Watches</h4>
+      <nvd3-line-chart
+        data="last30Data.watches"
+        showXAxis="true"
+        showYAxis="true"
+        showLegend="true"
+        height="300"
+        stacked="true"
+        reduceXTicks="true"
+        tooltips="true"
+        yAxisTickFormat="integer"
+        xAxisTickFormat="date"
+        >
+        <svg></svg>
+      </nvd3-line-chart>
+    </div>
+  </li>
+
+  <li class="card-item card-2-col-item">
+    <div class="card">
+      <h4>Time</h4>
+      <nvd3-line-chart
+        data="last30Data.time"
+        showXAxis="true"
+        showYAxis="true"
+        showLegend="true"
+        height="300"
+        stacked="true"
+        reduceXTicks="true"
+        tooltips="true"
+        yAxisTickFormat="duration"
+        xAxisTickFormat="date"
+        >
+        <svg></svg>
+      </nvd3-line-chart>
+    </div>
+  </li>
+</ul>

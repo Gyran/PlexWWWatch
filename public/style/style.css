@@ -194,3 +194,11 @@ div[ng-include="templates.pagination"] {
     font-size: 72px;
     left: 10px;
 }
+
+.tick line {
+  display: none;
+}
+
+.nvtooltip {
+    color: #000;
+}

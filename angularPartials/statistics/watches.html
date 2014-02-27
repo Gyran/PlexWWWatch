@@ -1,0 +1,58 @@
+<ul class="list card-list">
+  <li class="card-item card-2-col-item">
+    <div class="card">
+      <h4>Day of Month</h4>
+      <nvd3-multi-bar-chart
+        data="dayOfMonthData.watches"
+        showXAxis="true"
+        showYAxis="true"
+        showLegend="true"
+        height="300"
+        stacked="true"
+        reduceXTicks="false"
+        tooltips="true"
+        yAxisTickFormat="integer"
+        >
+        <svg></svg>
+      </nvd3-multi-bar-chart>
+    </div>
+  </li>
+
+  <li class="card-item card-2-col-item">
+    <div class="card ">
+    <h4>Hour of Day</h4>
+      <nvd3-multi-bar-chart
+        data="hourOfDayData.watches"
+        showXAxis="true"
+        showYAxis="true"
+        showLegend="true"
+        height="300"
+        stacked="true"
+        tooltips="true"
+        reduceXTicks="false"
+        yAxisTickFormat="integer"
+        >
+        <svg></svg>
+      </nvd3-multi-bar-chart>
+    </div>
+  </li>
+
+  <li class="card-item card-2-col-item">
+    <div class="card ">
+    <h4>Day of Week</h4>
+      <nvd3-multi-bar-chart
+        data="dayOfWeekData.watches"
+        showXAxis="true"
+        showYAxis="true"
+        showLegend="true"
+        height="300"
+        stacked="true"
+        tooltips="true"
+        reduceXTicks="false"
+        yAxisTickFormat="integer"
+        >
+        <svg></svg>
+      </nvd3-multi-bar-chart>
+    </div>
+  </li>
+</ul>
