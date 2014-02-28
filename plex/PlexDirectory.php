@@ -1,31 +1,15 @@
 <?php
+require_once(__DIR__ . "/PlexXMLObject.php");
 
-class PlexDirectory implements JsonSerializable {
+class PlexDirectory extends PlexXMLObject implements JsonSerializable {
     public function __construct($xml) {
-        $this->type = "";
-        if (isset($xml["type"])) {
-            $this->type = $xml["type"]->__toString();
-        }
-
-        $this->title = "";
-        if (isset($xml["title"])) {
-            $this->title = $xml["title"]->__toString();
-        }
-
-        $this->parentTitle = "";
-        if (isset($xml["parentTitle"])) {
-            $this->parentTitle = $xml["parentTitle"]->__toString();
-        }
-
-        $this->thumb = "";
-        if (isset($xml["thumb"])) {
-            $this->thumb = $xml["thumb"]->__toString();
-        }
-
-        $this->addedAt = "";
-        if (isset($xml["addedAt"])) {
-            $this->addedAt = $xml["addedAt"]->__toString() * 1000;
-        }
+        $this->setNotSetted("ratingKey", $xml);
+        $this->setNotSetted("type", $xml);
+        $this->setNotSetted("title", $xml);
+        $this->setNotSetted("parentTitle", $xml);
+        $this->setNotSetted("thumb", $xml);
+        $this->setNotSetted("addedAt", $xml);
+        $this->addedAt = $this->addedAt * 1000;
     }
 
     public function jsonSerialize() {
@@ -39,7 +23,7 @@ class PlexDirectory implements JsonSerializable {
 
     private $jsonFields = [
         "type", "title", "parentTitle", "thumb",
-        "addedAt"
+        "addedAt", "ratingKey"
     ];
 }
 

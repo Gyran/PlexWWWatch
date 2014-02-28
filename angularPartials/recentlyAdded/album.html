@@ -1,6 +1,5 @@
 <a class="media-poster-container">
-  <div class="media-poster">
-    <img ng-src="{{ item.thumbsrc }}" class="poster">
+  <div class="media-poster" ng-style="{'background-image': 'url(' + item.thumbsrc + ')' }">
   </div>
 
   <div class="media-title media-heading">{{ item.title }}</div>

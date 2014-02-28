@@ -19,7 +19,7 @@
 
   <div class="dashboard-list-container" ng-style="positionStyle">
     <ul class="tile-list media-tile-list horizontal-media-tile-list" ng-style="listWidthStyle">
-        <li class="poster-item media-tile-list-item" ng-repeat="item in recentlyAdded"ng-controller="RecentlyAddedItemCtrl" ng-include="item.template">
+        <li class="poster-item media-tile-list-item {{item.type}}" ng-repeat="item in recentlyAdded"ng-controller="RecentlyAddedItemCtrl" ng-include="item.template">
 
         </li>
     </ul>

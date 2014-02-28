@@ -1,0 +1,22 @@
+<div class="season-details-row details-row" ng-controller="DetailsSeasonCtrl">
+  <div class="details-title-container">
+    <h1 class="show-title">{{ plexItem.parentTitle }}</h1>
+    <h2 class="season-title">{{plexItem.title }}</h2>
+  </div>
+  <div class="details-metadata-container">
+    <div class="episode-list-container details-list-container">
+      <ul class="tile-list media-tile-list episode-tile-list">
+
+        <li class="poster-item media-tile-list-item episode" ng-repeat="child in children">
+          <a class="media-poster-container" ng-href="#/details/{{ child.ratingKey }}">
+            <div class="media-poster" ng-style="{ 'background-image': 'url(' + poster(child.thumb) + ')'}"></div>
+
+            <div class="media-title media-heading">{{ child.title }}</div>
+            <div class="media-subtitle media-heading secondary">Episode {{ child.index }}</div>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,27 +1,23 @@
-<div class="dashboard-container">
-  <ul class="nav nav-header nav-dashboard pull-right">
-    <li>
-      <a class="previous-btn btn-gray"
-        ng-class="{'disabled': tableParams.page() <= 1}"
-        ng-click="tableParams.page(max(1, tableParams.page() - 1))">
-        <i class="glyphicon chevron-left"></i>
-      </a>
-    </li>
-    <li>
-      <a class="next-btn btn-gray"
-        ng-class="{'disabled': tableParams.page() >= pages()}"
-        ng-click="tableParams.page(min(pages(), tableParams.page() + 1))">
-        <i class="glyphicon chevron-right"></i>
-      </a>
-    </li>
-  </ul>
-  <h3>Recently Watched</h3>
+<ul class="nav nav-header nav-dashboard pull-right">
+  <li>
+    <a class="previous-btn btn-gray"
+      ng-class="{'disabled': tableParams.page() <= 1}"
+      ng-click="tableParams.page(max(1, tableParams.page() - 1))">
+      <i class="glyphicon chevron-left"></i>
+    </a>
+  </li>
+  <li>
+    <a class="next-btn btn-gray"
+      ng-class="{'disabled': tableParams.page() >= pages()}"
+      ng-click="tableParams.page(min(pages(), tableParams.page() + 1))">
+      <i class="glyphicon chevron-right"></i>
+    </a>
+  </li>
+</ul>
+<h3>Recently Watched</h3>
 
-  <table ng-table="tableParams" class="watched">
-    <tr ng-repeat="w in $data" ng-include="w.template" ng-controller="WatchedRowCtrl" class="striped-list-item">
+<table ng-table="tableParams" class="watched">
+  <tr ng-repeat="w in $data" ng-include="w.template" ng-controller="WatchedRowCtrl" class="striped-list-item">
 
-    </tr>
-  </table>
-
-</div>
-
+  </tr>
+</table>

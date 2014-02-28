@@ -1,6 +1,6 @@
 <?php
-require_once("plex-watch/PlexWatch.php");
-require_once("plex/Plex.php");
+require_once(__DIR__ . "/plex-watch/PlexWatch.php");
+require_once(__DIR__ . "/plex/Plex.php");
 
 class PlexWWWatchSettings implements JsonSerializable {
     public function __construct($file) {
@@ -102,6 +102,18 @@ class PlexWWWatch {
 
     public function statistics() {
         return $this->plexWatch()->statistics();
+    }
+
+    public function plexItem($item) {
+        return $this->plex()->metadata($item);
+    }
+
+    public function plexChildren($item) {
+        return $this->plex()->children($item);
+    }
+
+    public function plexWatchItem($item) {
+        return $this->plexWatch()->item($item);
     }
 
     public function getSettings($what = "") {

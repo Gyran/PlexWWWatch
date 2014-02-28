@@ -1,0 +1,47 @@
+<div class="episode-details-row details-row" ng-controller="DetailsEpisodeCtrl">
+  <div class="details-title-container">
+    <h1 class="show-title">{{ plexItem.grandparentTitle }}</h1>
+    <h2 class="episode-title">{{ plexItem.title }}</h2>
+    <h3 class="episode-index">S{{ plexItem.parentIndex | ddigit }}E{{ plexItem.index | ddigit }}</h3>
+  </div>
+
+   <div class="details-metadata-container">
+    <div class="metadata-right pull-right">
+      <div class="item-available-at metadata-tags">
+        {{ plexItem.originallyAvailableAt }}
+      </div>
+
+      <div class="content-rating-flag-container"><img class="episode-content-rating content-rating-flag" ng-src="{{ contentRatingImage }}"></div>
+    </div>
+
+    <p class="metadata-labels">
+      <span class="item-duration metadata-duration">
+        {{ plexItem.duration | exactDuration }}
+      </span>
+    </p>
+
+    <p class="item-summary metadata-summary">
+      {{ plexItem.summary }}
+    </p>
+    <ng-include src="'partials/recentlyWatched.html'" ng-controller="DetailsRecentlyWatchedCtrl"></ng-include>
+  </div>
+
+  <div class="details-poster-container">
+    <a class="media-poster-container edit-poster-btn">
+      <div class="episode-poster item-poster media-poster" ng-style="{'background-image': 'url(' + posterImage + ')'}">
+      </div>
+    </a>
+
+    <div class="item-available-at metadata-tags">
+      <ng-pluralize count="plexWatchItem.numWatches"
+        when="{'0': 'Never watched.', 'one': 'Watched {} time.', 'other': 'Watched {} times.' }"></ng-pluralize>
+    </div>
+    <div class="item-available-at metadata-tags">
+      <ng-pluralize count="plexWatchItem.numCompleted"
+        when="{'0': 'Never completed.', 'one': 'Completed {} time.', 'other': 'Completed {} times.' }"></ng-pluralize>
+    </div>
+    <div class="item-available-at metadata-tags">
+      {{ plexWatchItem.timeWatched | duration }} watched.
+    </div>
+  </div>
+</div>

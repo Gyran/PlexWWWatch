@@ -1,9 +1,10 @@
 <?php
-require_once("PlexWatchWatched.php");
-require_once("PlexWatchWatchedIterator.php");
-require_once("PlexWatchUser.php");
-require_once("PlexWatchUserDetails.php");
-require_once("PlexWatchStatistics.php");
+require_once(__DIR__ . "/PlexWatchWatched.php");
+require_once(__DIR__ . "/PlexWatchWatchedIterator.php");
+require_once(__DIR__ . "/PlexWatchUser.php");
+require_once(__DIR__ . "/PlexWatchUserDetails.php");
+require_once(__DIR__ . "/PlexWatchStatistics.php");
+require_once(__DIR__ . "/PlexWatchItem.php");
 
 class PlexWatch {
     function __construct($dbpath, $grouped = false) {
@@ -43,6 +44,22 @@ class PlexWatch {
         }
 
         return $user;
+    }
+
+    public function item($itemId) {
+        $itemId = 0 + $itemId;
+        $config = [
+            "item" => $itemId
+        ];
+
+        $item = new PlexWatchItem($itemId);
+
+        $it = $this->_watchedIterator($config);
+        foreach ($it as $watched) {
+            $item->addWatched($watched);
+        }
+
+        return $item;
     }
 
     public function settings() {
@@ -89,21 +106,28 @@ class PlexWatch {
 
         $sql = "SELECT * FROM " . $this->_getWatchedTable();
         if (isset($config["user"])) {
-            $where[] = ["user", ":user"];
+            $where[] = " user = :user";
             $bind[] = [":user", $config["user"], PDO::PARAM_STR];
         }
 
+        if (isset($config["item"])) {
+            $where[] = " session_id LIKE :item ESCAPE '\'";
+            $item = "%/" . $config["item"] . "\_%";
+            $bind[] = [":item", $item, PDO::PARAM_STR];
+        }
+
         if (!empty($where)) {
-            $sql .= " WHERE ";
+            $sql .= " WHERE";
+            $and = "";
             foreach ($where as $w) {
-                $sql .= " " . $w[0] . "=" . $w[1] . " ";
+                $sql .= $and . $w;
+                $and = " AND";
             }
         }
 
         $sql .= " ORDER BY id DESC";
 
         $statement = $this->_dbh->prepare($sql);
-
         foreach ($bind as $b) {
             $statement->bindValue($b[0], $b[1], $b[2]);
         }

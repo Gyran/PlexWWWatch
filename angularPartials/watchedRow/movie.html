@@ -51,12 +51,11 @@
 
 <td data-title="" sortable="'orig_title_ep'" class="title-container media-details-list-item">
   <span class="media-title media-heading">
-    {{ w.origTitle }}
+    <a ng-href="#/movie/{{ w.metaid }}" class="btn-white btn-gray">
+      {{ w.origTitle }}
+    </a>
   </span>
   <span class="media-subtitle media-heading secondary">
     {{ w.year }}
   </span>
-  <p class="media-tagline">
-    Season {{ w.season }} Episode {{w.episode }} - {{ w.origTitleEp }}
-  </p>
 </td>

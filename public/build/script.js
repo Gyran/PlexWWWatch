@@ -5,7 +5,8 @@ angular.module("ngPlexWatch",
 .factory("PlexWatch", ["$resource", function ($resource) {
     return {
         "Users": $resource("backend/users.php"),
-        "Watched": $resource("backend/watched.php")
+        "Watched": $resource("backend/watched.php"),
+        "Item": $resource("backend/plexWatchItem.php")
     };
 }]);
 
@@ -14,6 +15,12 @@ angular.module("plex",
         "base64",
         "LocalStorageModule"
     ])
+.factory("Plex", ["$resource", function ($resource) {
+    return {
+        "Item": $resource("backend/plexItem.php"),
+        "Children": $resource("backend/plexChildren.php")
+    };
+}])
 .service("myPlex", function ($http, $base64, $q, localStorageService) {
     var user = null;
     var pmsHost = "";
@@ -193,17 +200,6 @@ angular.module("plex-wwwatch",
 
     this.statistics = $resource("backend/statistics.php");
 
-/*
-    this.recentlyAdded = function () {
-        var deferred = $q.defer();
-        $http.get("backend/recentlyAdded.php").success(function (data) {
-            deferred.resolve(data);
-        });
-
-        return deferred.promise;
-    };
-*/
-
     this.getSettings = function () {
         var deferred = $q.defer();
         $http.get("backend/settings.php").success(function (data) {
@@ -264,6 +260,10 @@ angular.module("plex-wwwatch",
         .when("/statistics", {
             controller: "StatisticsCtrl",
             templateUrl: "partials/statistics.html"
+        })
+        .when("/details/:item", {
+            controller: "DetailsCtrl",
+            templateUrl: "partials/details/index.html"
         })
         .otherwise({ redirectTo: "/home" })
         ;
@@ -326,15 +326,24 @@ function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams, PlexWatch) 
 
 function WatchedRowCtrl ($scope) {
     (function () {
-        $scope.w.thumbsrc = "backend/image.php?width=100&height=145&url=" + $scope.w.thumb;
+        var src = $scope.w.thumb;
+        if ($scope.w.type === "episode") {
+            src = $scope.w.parentThumb;
+        }
+
+        if (src !== "") {
+            $scope.w.thumbsrc = "backend/image.php?width=100&height=145&url=" + src;
+        } else {
+            $scope.w.thumbsrc = "img/posters/standard.png";
+        }
     })();
 
     (function () {
         var templates = {
-            "episode": "partials/watchedRowEpisode.html",
-            "movie": "partials/watchedRowMovie.html"
+            "episode": "partials/watchedRow/episode.html",
+            "movie": "partials/watchedRow/movie.html"
         };
-        var template = "partials/watchedRow.html";
+        var template = "partials/watched/row.html";
 
         if (templates.hasOwnProperty($scope.w.type)) {
             template = templates[$scope.w.type];
@@ -576,7 +585,11 @@ function RecentlyAddedItemCtrl ($scope) {
     })();
 
     (function () {
-        $scope.item.thumbsrc = "backend/image.php?width=150&height=225&url=" + $scope.item.thumb;
+        if ($scope.item.thumb !== "") {
+            $scope.item.thumbsrc = "backend/image.php?width=150&height=225&url=" + $scope.item.thumb;
+        } else {
+            $scope.item.thumbsrc = "img/posters/standard.png";
+        }
     })();
 }
 
@@ -708,6 +721,77 @@ function StatisticsCtrl ($scope, $filter, PWWWService) {
     });
 }
 
+function DetailsCtrl ($scope, $routeParams, PlexWatch, Plex) {
+    $scope.plexItem = {};
+    $scope.watched = [];
+    $scope.plexWatchItem = {};
+
+    var templates = {
+        "movie":   "partials/details/movie.html",
+        "episode": "partials/details/episode.html",
+        "season": "partials/details/season.html"
+    };
+
+    $scope.template = "";
+
+    $scope.plexItem = Plex.Item.get({item: $routeParams.item}, function (plexItem) {
+        if (templates.hasOwnProperty(plexItem.type)) {
+            $scope.template = templates[plexItem.type];
+        }
+    });
+
+    PlexWatch.Item.get({item: $routeParams.item}, function (data) {
+        $scope.plexWatchItem = data.item;
+        $scope.watched = data.watched;
+    });
+}
+
+function DetailsEpisodeCtrl ($scope) {
+    (function () {
+        $scope.posterImage = "backend/image.php?width=280&height=157&url=" + $scope.plexItem.thumb;
+    })();
+}
+
+function DetailsMovieCtrl ($scope) {
+    (function () {
+        $scope.posterImage = "backend/image.php?width=280&height=420&url=" + $scope.plexItem.thumb;
+    })();
+}
+
+function DetailsSeasonCtrl ($scope, $routeParams, Plex) {
+    $scope.children = Plex.Children.query({item: $routeParams.item });
+
+    $scope.poster = function (thumb) {
+        console.log("backend/image.php?width=280&height=157&url=" + thumb);
+        return "backend/image.php?width=280&height=157&url=" + thumb;
+    }
+}
+
+function DetailsRecentlyWatchedCtrl ($scope, $filter, ngTableParams) {
+    $scope.tableParams = new ngTableParams({
+        page: 1,
+        count: 10,
+        sorting: {
+            time: "desc"
+        }
+    }, {
+        total: 0,
+        getData: function($defer, params) {
+            var orderedData = params.sorting() ?
+                $filter("orderBy")($scope.watched, params.orderBy()) :
+                $scope.watched;
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+     });
+
+    $scope.pages = function () {
+        return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
+    };
+
+    $scope.min = Math.min;
+    $scope.max = Math.max;
+}
+
 angular.module("plex-wwwatch")
 .filter("duration", function () {
     return function (input) {
@@ -717,9 +801,35 @@ angular.module("plex-wwwatch")
         return moment.duration(input).humanize();
     };
 })
+.filter("exactDuration", function () {
+    return function (input) {
+        if (input === 0) {
+            return "nothing";
+        }
+        var d = moment.duration(input);
+        ret = "";
+
+        if (d.hours() > 0) {
+            ret = ret + d.hours() + " hr ";
+        }
+        if (d.minutes() > 0) {
+            ret = ret + d.minutes() + " min ";
+        }
+        return ret;
+
+    };
+})
 .filter("ucFirst", function () {
     return function (input) {
         return input.charAt(0).toUpperCase() + input.slice(1);
+    };
+})
+.filter("ddigit", function () {
+    return function (input) {
+        if (input < 10) {
+            return "0" + input;
+        }
+        return input;
     };
 })
 ;

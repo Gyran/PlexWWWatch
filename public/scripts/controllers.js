@@ -37,15 +37,24 @@ function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams, PlexWatch) 
 
 function WatchedRowCtrl ($scope) {
     (function () {
-        $scope.w.thumbsrc = "backend/image.php?width=100&height=145&url=" + $scope.w.thumb;
+        var src = $scope.w.thumb;
+        if ($scope.w.type === "episode") {
+            src = $scope.w.parentThumb;
+        }
+
+        if (src !== "") {
+            $scope.w.thumbsrc = "backend/image.php?width=100&height=145&url=" + src;
+        } else {
+            $scope.w.thumbsrc = "img/posters/standard.png";
+        }
     })();
 
     (function () {
         var templates = {
-            "episode": "partials/watchedRowEpisode.html",
-            "movie": "partials/watchedRowMovie.html"
+            "episode": "partials/watchedRow/episode.html",
+            "movie": "partials/watchedRow/movie.html"
         };
-        var template = "partials/watchedRow.html";
+        var template = "partials/watched/row.html";
 
         if (templates.hasOwnProperty($scope.w.type)) {
             template = templates[$scope.w.type];
@@ -287,7 +296,11 @@ function RecentlyAddedItemCtrl ($scope) {
     })();
 
     (function () {
-        $scope.item.thumbsrc = "backend/image.php?width=150&height=225&url=" + $scope.item.thumb;
+        if ($scope.item.thumb !== "") {
+            $scope.item.thumbsrc = "backend/image.php?width=150&height=225&url=" + $scope.item.thumb;
+        } else {
+            $scope.item.thumbsrc = "img/posters/standard.png";
+        }
     })();
 }
 
@@ -417,4 +430,75 @@ function StatisticsCtrl ($scope, $filter, PWWWService) {
         });
         $scope.last30Data = last30;
     });
+}
+
+function DetailsCtrl ($scope, $routeParams, PlexWatch, Plex) {
+    $scope.plexItem = {};
+    $scope.watched = [];
+    $scope.plexWatchItem = {};
+
+    var templates = {
+        "movie":   "partials/details/movie.html",
+        "episode": "partials/details/episode.html",
+        "season": "partials/details/season.html"
+    };
+
+    $scope.template = "";
+
+    $scope.plexItem = Plex.Item.get({item: $routeParams.item}, function (plexItem) {
+        if (templates.hasOwnProperty(plexItem.type)) {
+            $scope.template = templates[plexItem.type];
+        }
+    });
+
+    PlexWatch.Item.get({item: $routeParams.item}, function (data) {
+        $scope.plexWatchItem = data.item;
+        $scope.watched = data.watched;
+    });
+}
+
+function DetailsEpisodeCtrl ($scope) {
+    (function () {
+        $scope.posterImage = "backend/image.php?width=280&height=157&url=" + $scope.plexItem.thumb;
+    })();
+}
+
+function DetailsMovieCtrl ($scope) {
+    (function () {
+        $scope.posterImage = "backend/image.php?width=280&height=420&url=" + $scope.plexItem.thumb;
+    })();
+}
+
+function DetailsSeasonCtrl ($scope, $routeParams, Plex) {
+    $scope.children = Plex.Children.query({item: $routeParams.item });
+
+    $scope.poster = function (thumb) {
+        console.log("backend/image.php?width=280&height=157&url=" + thumb);
+        return "backend/image.php?width=280&height=157&url=" + thumb;
+    }
+}
+
+function DetailsRecentlyWatchedCtrl ($scope, $filter, ngTableParams) {
+    $scope.tableParams = new ngTableParams({
+        page: 1,
+        count: 10,
+        sorting: {
+            time: "desc"
+        }
+    }, {
+        total: 0,
+        getData: function($defer, params) {
+            var orderedData = params.sorting() ?
+                $filter("orderBy")($scope.watched, params.orderBy()) :
+                $scope.watched;
+            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+     });
+
+    $scope.pages = function () {
+        return Math.ceil($scope.tableParams.total() / $scope.tableParams.count());
+    };
+
+    $scope.min = Math.min;
+    $scope.max = Math.max;
 }

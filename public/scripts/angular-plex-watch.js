@@ -5,6 +5,7 @@ angular.module("ngPlexWatch",
 .factory("PlexWatch", ["$resource", function ($resource) {
     return {
         "Users": $resource("backend/users.php"),
-        "Watched": $resource("backend/watched.php")
+        "Watched": $resource("backend/watched.php"),
+        "Item": $resource("backend/plexWatchItem.php")
     };
 }]);

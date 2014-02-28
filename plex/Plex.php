@@ -1,6 +1,6 @@
 <?php
-require_once("PlexDirectory.php");
-require_once("PlexVideo.php");
+require_once(__DIR__ . "/PlexDirectory.php");
+require_once(__DIR__ . "/PlexVideo.php");
 
 class Plex {
     function __construct($remote, $local, $token) {
@@ -22,6 +22,7 @@ class Plex {
 
     function recentlyAdded() {
         $ret = $this->_get("/library/recentlyAdded");
+
         if (!$ret) {
             return [];
         }
@@ -30,15 +31,7 @@ class Plex {
 
         $recentlyAdded = [];
         foreach ($recentlyAddedXml->children() as $type => $xml) {
-            switch ($type) {
-                case "Directory":
-                    $recentlyAdded[] = new PlexDirectory($xml);
-                    break;
-                case "Video":
-                    $recentlyAdded[] = new PlexVideo($xml);
-                default:
-                    break;
-            }
+            $recentlyAdded[] = $this->_mediaToObject($type, $xml);
         }
 
         return $recentlyAdded;
@@ -48,11 +41,49 @@ class Plex {
         header("Content-type: image/jpeg");
 
         $url = $this->_local . $url;
-        $str = sprintf("/photo/:/transcode?width=%d&height=%d&minSize=1&url=%s", $width, $height, $url);
+        $str = sprintf("/photo/:/transcode?width=%d&height=%d&minSize=1&url=%s", $width, $height, urlencode($url));
         $image = $this->_get($str);
         if ($image) {
             echo $image;
         }
+    }
+
+    function _mediaToObject($type, $xml) {
+        switch ($type) {
+            case "Directory":
+                return new PlexDirectory($xml);
+            case "Video":
+                return new PlexVideo($xml);
+        }
+
+        return new stdObject();
+    }
+
+    function metadata($usRatingKey) {
+        $sRatingKey = 0 + $usRatingKey;
+
+        $url = sprintf("/library/metadata/%d", $sRatingKey);
+        $xml = simplexml_load_string($this->_get($url));
+
+        foreach ($xml->children() as $type => $child) {
+            return $this->_mediaToObject($type, $child);
+        }
+    }
+
+    function children($usRatingKey) {
+        $sRatingKey = 0 + $usRatingKey;
+
+        $url = sprintf("/library/metadata/%d/children", $sRatingKey);
+        $childrenXml = simplexml_load_string($this->_get($url));
+
+        //print_r($childrenXml);
+
+        $children = [];
+        foreach ($childrenXml->children() as $type => $xml) {
+            $children[] = $this->_mediaToObject($type, $xml);
+        }
+
+        return $children;
     }
 
     function _get($url) {

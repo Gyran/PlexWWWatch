@@ -15,7 +15,7 @@ class PlexWatchWatched implements JsonSerializable {
         $this->season           = $dbrow["season"];
         $this->year             = $dbrow["year"];
         $this->rating           = $dbrow["rating"];
-        $this->genre            = $dbrow["genre"];
+        //$this->genre            = $dbrow["genre"];
         $this->summary          = $dbrow["summary"];
         $this->notified         = $dbrow["notified"];
         $this->stopped          = $dbrow["stopped"] * 1000;
@@ -63,20 +63,26 @@ class PlexWatchWatched implements JsonSerializable {
 
     private function get_thumb() {
         $thumb = "";
-        if ($this->type == "movie") {
-            if (isset($this->xml["thumb"])) {
-                $thumb = $this->xml["thumb"]->__toString();
-            }
-        } else if ($this->type == "episode") {
-            if (isset($this->xml["parentThumb"])) {
-                $thumb = $this->xml["parentThumb"]->__toString();
-            } else if (isset($this->xml["grandparentThumb"])) {
-                $thumb = $this->xml["grandparentThumb"]->__toString();
-            } else if (isset($xml["thumb"])) {
-                $thumb = $this->xml["thumb"]->__toString();
-            }
+        if (isset($this->xml["thumb"])) {
+            $thumb = $this->xml["thumb"]->__toString();
         }
         return $this->thumb = $thumb;
+    }
+
+    private function get_parentThumb() {
+        $parentThumb = "";
+        if (isset($this->xml["parentThumb"])) {
+            $parentThumb = $this->xml["parentThumb"]->__toString();
+        }
+        return $this->parentThumb = $parentThumb;
+    }
+
+    private function get_grandParentThumb() {
+        $grandParentThumb = "";
+        if (isset($this->xml["grandParentThumb"])) {
+            $grandParentThumb = $this->xml["grandParentThumb"]->__toString();
+        }
+        return $this->grandParentThumb = $grandParentThumb;
     }
 
     private function get_duration() {
@@ -84,7 +90,7 @@ class PlexWatchWatched implements JsonSerializable {
         if (isset($this->xml["duration"])) {
             $duration = $this->xml["duration"]->__toString();
         }
-        return $this->duration = $duration;
+        return $this->duration = $duration * 1;
     }
 
     private function get_viewOffset() {
@@ -124,6 +130,54 @@ class PlexWatchWatched implements JsonSerializable {
         return $this->dateTime;
     }
 
+    private function get_art() {
+        $art = "";
+        if (isset($this->xml["art"])) {
+            $art = $this->xml["art"]->__toString();
+        }
+        return $this->art = $art;
+    }
+
+    private function get_addedAt() {
+        $addedAt = "";
+        if (isset($this->xml["addedAt"])) {
+            $addedAt = $this->xml["addedAt"]->__toString() * 1000;
+        }
+        return $this->addedAt = $addedAt;
+    }
+
+    private function get_directors() {
+
+    }
+
+    private function get_genres() {
+
+    }
+
+    private function get_roles() {
+
+    }
+
+    private function get_writers() {
+
+    }
+
+    private function get_producer() {
+
+    }
+
+    private function get_conuntry() {
+
+    }
+
+    private function get_metaid() {
+        $metaid = 0;
+        if (preg_match("/metadata\/(\d+)\_/", $this->sessionId, $matches)) {
+            $metaid = $matches[1];
+        }
+        return $this->metaid = $metaid;
+    }
+
     private $jsonFields = array(
         "id", "time", "title", "origTitle",
         "origTitleEp", "user", "device",
@@ -131,7 +185,8 @@ class PlexWatchWatched implements JsonSerializable {
         "pausedCounter", "ipAddress", "thumb",
         "duration", "episode", "season", "viewOffset",
         "type", "viewOffset", "timeWatched", "duration",
-        "progress", "year", "userDisplay"
+        "progress", "year", "userDisplay", "parentThumb",
+        "metaid"
     );
 
     public $id;

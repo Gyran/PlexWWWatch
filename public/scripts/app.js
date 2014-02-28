@@ -48,17 +48,6 @@ angular.module("plex-wwwatch",
 
     this.statistics = $resource("backend/statistics.php");
 
-/*
-    this.recentlyAdded = function () {
-        var deferred = $q.defer();
-        $http.get("backend/recentlyAdded.php").success(function (data) {
-            deferred.resolve(data);
-        });
-
-        return deferred.promise;
-    };
-*/
-
     this.getSettings = function () {
         var deferred = $q.defer();
         $http.get("backend/settings.php").success(function (data) {
@@ -119,6 +108,10 @@ angular.module("plex-wwwatch",
         .when("/statistics", {
             controller: "StatisticsCtrl",
             templateUrl: "partials/statistics.html"
+        })
+        .when("/details/:item", {
+            controller: "DetailsCtrl",
+            templateUrl: "partials/details/index.html"
         })
         .otherwise({ redirectTo: "/home" })
         ;

@@ -3,6 +3,12 @@ angular.module("plex",
         "base64",
         "LocalStorageModule"
     ])
+.factory("Plex", ["$resource", function ($resource) {
+    return {
+        "Item": $resource("backend/plexItem.php"),
+        "Children": $resource("backend/plexChildren.php")
+    };
+}])
 .service("myPlex", function ($http, $base64, $q, localStorageService) {
     var user = null;
     var pmsHost = "";

@@ -38,44 +38,41 @@
       </div>
 
       <ul class="list card-list">
-          <li class="card-item card-2-col-item card-4-col-item" ng-repeat="(name, interval) in user.intervalWatched">
-            <div class="card card-device">
-              <div class="card-actions"></div>
-              <h4 class="product">{{ interval.title }}</h4>
+        <li class="card-item card-2-col-item card-4-col-item" ng-repeat="(name, interval) in user.intervalWatched">
+          <div class="card card-device">
+            <div class="card-actions"></div>
+            <h4 class="product">{{ interval.title }}</h4>
 
-              <div class="device-info-container">
-                <div class="name">{{ interval.watches }} Watches</div>
-                <div class="device text-muted">{{ interval.timeWatched | duration }} watched</div>
-              </div>
+            <div class="device-info-container">
+              <div class="name">{{ interval.watches }} Watches</div>
+              <div class="device text-muted">{{ interval.timeWatched | duration }} watched</div>
             </div>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </li>
+      </ul>
     </div>
 
     <div class="row" ng-show="selectedStats == 'types'">
-      <div class="">
-        <ul class="list card-list">
-          <li class="card-item card-2-col-item card-item-device card-4-col-item" ng-repeat="(name, type) in user.types">
-            <div class="card card-device">
-              <i class="device-icon section-icon {{ typeIcon(name) }}"></i>
-              <div class="card-actions"></div>
-              <h4 class="product">{{ name | ucFirst }}s</h4>
 
-              <div class="device-info-container">
-                <div class="name">{{ type.watches }} Watches</div>
-                <div class="device text-muted">{{ type.timeWatched | duration }} watched</div>
-              </div>
+      <ul class="list card-list">
+        <li class="card-item card-2-col-item card-item-device card-4-col-item" ng-repeat="(name, type) in user.types">
+          <div class="card card-device">
+            <i class="device-icon section-icon {{ typeIcon(name) }}"></i>
+            <div class="card-actions"></div>
+            <h4 class="product">{{ name | ucFirst }}s</h4>
+
+            <div class="device-info-container">
+              <div class="name">{{ type.watches }} Watches</div>
+              <div class="device text-muted">{{ type.timeWatched | duration }} watched</div>
             </div>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
-
 </div>
 
-<div class="container">
+<div class="dashboardcontainer">
   <h3>Devices</h3>
   <div class="device-list-container">
     <ul class="list card-list">
@@ -98,4 +95,6 @@
   </div>
 </div>
 
-<ng-include src="'partials/recentlyWatched.html'" ng-controller="UserRecentlyWatchedCtrl"></ng-include>
+<div class="dashboard-container">
+  <ng-include src="'partials/recentlyWatched.html'" ng-controller="UserRecentlyWatchedCtrl"></ng-include>
+</div>

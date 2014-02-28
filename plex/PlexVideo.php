@@ -1,31 +1,32 @@
 <?php
+require_once(__DIR__ . "/PlexXMLObject.php");
 
-class PlexVideo implements JsonSerializable {
+class PlexVideo extends PlexXMLObject implements JsonSerializable {
     public function __construct($xml) {
-        $this->type = "";
-        if (isset($xml["type"])) {
-            $this->type = $xml["type"]->__toString();
-        }
-
-        $this->title = "";
-        if (isset($xml["title"])) {
-            $this->title = $xml["title"]->__toString();
-        }
-
-        $this->thumb = "";
-        if (isset($xml["thumb"])) {
-            $this->thumb = $xml["thumb"]->__toString();
-        }
-
-        $this->year = "0";
-        if (isset($xml["year"])) {
-            $this->year = $xml["year"]->__toString();
-        }
-
-        $this->addedAt = "";
-        if (isset($xml["addedAt"])) {
-            $this->addedAt = $xml["addedAt"]->__toString() * 1000;
-        }
+        $this->setNotSetted("ratingKey", $xml, 0);
+        $this->setNotSetted("parentRatingKey", $xml, 0);
+        $this->setNotSetted("grandparentRratingKey", $xml, 0);
+        $this->setNotSetted("grandparentTitle", $xml);
+        $this->setNotSetted("contentRating", $xml);
+        $this->setNotSetted("index", $xml);
+        $this->setNotSetted("parentIndex", $xml);
+        $this->setNotSetted("originallyAvailableAt", $xml);
+        $this->setNotSetted("type", $xml);
+        $this->setNotSetted("title", $xml);
+        $this->setNotSetted("thumb", $xml);
+        $this->setNotSetted("parentThumb", $xml);
+        $this->setNotSetted("grandparentThumb", $xml);
+        $this->setNotSetted("art", $xml);
+        $this->setNotSetted("studio", $xml);
+        $this->setNotSetted("summary", $xml);
+        $this->setNotSetted("rating", $xml);
+        $this->setNotSetted("viewCount", $xml);
+        $this->setNotSetted("year", $xml);
+        $this->setNotSetted("tagline", $xml);
+        $this->setNotSetted("addedAt", $xml, 0);
+        $this->addedAt = $this->addedAt * 1000;
+        $this->setNotSetted("duration", $xml, 0);
+        $this->duration = 0 + $this->duration;
     }
 
     public function jsonSerialize() {
@@ -38,8 +39,11 @@ class PlexVideo implements JsonSerializable {
     }
 
     private $jsonFields = [
-        "type", "title", "thumb", "year",
-        "addedAt"
+        "contentRating", "index", "parentIndex", "thumb",
+        "grandparentTitle", "parentThumb", "grandparentThumb",
+        "originallyAvailableAt", "type", "art", "studio",
+        "title", "summary", "rating", "year", "tagline", "duration",
+        "addedAt", "ratingKey"
     ];
 }
 
