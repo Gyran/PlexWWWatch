@@ -1,14 +1,22 @@
 PlexWWWatch
 ===========
+Current version 0.1
 A web front-end for [Plex Watch](https://github.com/ljunkie/plexWatch)
 
 Features
 ---------------------
-Early development, only history at the moment
+- Recently added
+- Recently watched
+- Users list
+- User view
+- Details view for Seasons, Episodes and Movies
+- Charts
+- ...
 
 Prerequisites
 -----------------
-* Sqlite3
+* [Plex Watch](https://github.com/ljunkie/plexWatch)
+* PHP >= 5.4
 * Server that can serve PHP files
 
 Installation
