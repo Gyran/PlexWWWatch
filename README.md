@@ -17,6 +17,7 @@ Prerequisites
 -----------------
 * [Plex Watch](https://github.com/ljunkie/plexWatch)
 * PHP >= 5.4
+* php\_pdo\_sqlite
 * Server that can serve PHP files
 
 Installation
