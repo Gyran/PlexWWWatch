@@ -5,7 +5,7 @@ class PlexVideo extends PlexXMLObject implements JsonSerializable {
     public function __construct($xml) {
         $this->setNotSetted("ratingKey", $xml, 0);
         $this->setNotSetted("parentRatingKey", $xml, 0);
-        $this->setNotSetted("grandparentRratingKey", $xml, 0);
+        $this->setNotSetted("grandparentRatingKey", $xml, 0);
         $this->setNotSetted("grandparentTitle", $xml);
         $this->setNotSetted("contentRating", $xml);
         $this->setNotSetted("index", $xml);
@@ -27,6 +27,13 @@ class PlexVideo extends PlexXMLObject implements JsonSerializable {
         $this->addedAt = $this->addedAt * 1000;
         $this->setNotSetted("duration", $xml, 0);
         $this->duration = 0 + $this->duration;
+
+        $this->genre = [];
+        if (isset($xml->Genre)) {
+            foreach ($xml->Genre as $genre) {
+                $this->genre[] = $genre["tag"]->__toString();;
+            }
+        }
     }
 
     public function jsonSerialize() {
@@ -43,7 +50,7 @@ class PlexVideo extends PlexXMLObject implements JsonSerializable {
         "grandparentTitle", "parentThumb", "grandparentThumb",
         "originallyAvailableAt", "type", "art", "studio",
         "title", "summary", "rating", "year", "tagline", "duration",
-        "addedAt", "ratingKey"
+        "addedAt", "ratingKey", "genre", "grandparentRatingKey", "parentRatingKey"
     ];
 }
 

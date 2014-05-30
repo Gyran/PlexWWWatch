@@ -90,7 +90,6 @@ angular.module("plex-wwwatch",
 .config(["$routeProvider", function ($routeProvider) {
     $routeProvider
         .when("/home", {
-            controller: "HomeCtrl",
             templateUrl: "partials/home.html"
         })
         .when("/settings", {

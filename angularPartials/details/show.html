@@ -1,4 +1,4 @@
-<div class="movie-details-row details-row" ng-controller="DetailsMovieCtrl">
+<div class="show-details-row details-row" ng-controller="DetailsMovieCtrl">
   <div class="details-title-container">
     <h1 class="item-title">{{ plexItem.title }}</h1>
     <h2 class="item-year">{{ plexItem.year }}</h2>
@@ -14,6 +14,8 @@
           {{ genre }}
         </span>
       </div>
+
+      <div class="content-rating-flag-container"><img class="episode-content-rating content-rating-flag" ng-src="{{ contentRatingImage }}"></div>
     </div>
 
     <p class="metadata-labels">

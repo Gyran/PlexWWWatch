@@ -1,9 +1,19 @@
 <div class="season-details-row details-row" ng-controller="DetailsSeasonCtrl">
   <div class="details-title-container">
-    <h1 class="show-title">{{ plexItem.parentTitle }}</h1>
+    <h1 class="show-title">
+      <a ng-href="#/details/{{ plexItem.parentRatingKey }}">{{ plexItem.parentTitle }}</a>
+    </h1>
     <h2 class="season-title">{{plexItem.title }}</h2>
   </div>
   <div class="details-metadata-container">
+    <div class="filter-bar ng-binding">
+      <ng-pluralize count="plexWatchItem.numWatches" when="{'0': 'Never watched', '1': 'Total one watch', 'other': 'Total {} watches'}"></ng-pluralize>
+      and
+      <ng-pluralize count="plexWatchItem.numCompleted" when="{'0': ' never completed', '1': ' completed one time', 'other': ' completed {} times'}"></ng-pluralize>
+      with
+      {{ plexWatchItem.timeWatched | exactDuration }} watched.
+    </div>
+
     <div class="episode-list-container details-list-container">
       <ul class="tile-list media-tile-list episode-tile-list">
 

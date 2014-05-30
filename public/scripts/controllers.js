@@ -1,7 +1,3 @@
-function HomeCtrl ($scope) {
-
-}
-
 function RecentlyWatchedCtrl ($scope, $http, $filter, ngTableParams, PlexWatch) {
     var watched = [];
 
@@ -436,11 +432,13 @@ function DetailsCtrl ($scope, $routeParams, PlexWatch, Plex) {
     $scope.plexItem = {};
     $scope.watched = [];
     $scope.plexWatchItem = {};
+    $scope.error = "";
 
     var templates = {
         "movie":   "partials/details/movie.html",
         "episode": "partials/details/episode.html",
-        "season": "partials/details/season.html"
+        "season": "partials/details/season.html",
+        "show": "partials/details/show.html"
     };
 
     $scope.template = "";
@@ -448,6 +446,8 @@ function DetailsCtrl ($scope, $routeParams, PlexWatch, Plex) {
     $scope.plexItem = Plex.Item.get({item: $routeParams.item}, function (plexItem) {
         if (templates.hasOwnProperty(plexItem.type)) {
             $scope.template = templates[plexItem.type];
+        }  else {
+            $scope.error = "No PlexItem found";
         }
     });
 
@@ -475,7 +475,7 @@ function DetailsSeasonCtrl ($scope, $routeParams, Plex) {
     $scope.poster = function (thumb) {
         console.log("backend/image.php?width=280&height=157&url=" + thumb);
         return "backend/image.php?width=280&height=157&url=" + thumb;
-    }
+    };
 }
 
 function DetailsRecentlyWatchedCtrl ($scope, $filter, ngTableParams) {

@@ -111,9 +111,8 @@ class PlexWatch {
         }
 
         if (isset($config["item"])) {
-            $where[] = " session_id LIKE :item ESCAPE '\'";
-            $item = "%/" . $config["item"] . "\_%";
-            $bind[] = [":item", $item, PDO::PARAM_STR];
+            $where[] = " (ratingKey = :ratingKey OR parentRatingKey = :ratingKey OR grandparentRatingKey = :ratingKey)";
+            $bind[] = [":ratingKey", $config["item"], PDO::PARAM_INT];
         }
 
         if (!empty($where)) {

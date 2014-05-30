@@ -56,7 +56,7 @@ class Plex {
                 return new PlexVideo($xml);
         }
 
-        return new stdObject();
+        return new stdClass;
     }
 
     function metadata($usRatingKey) {
@@ -64,6 +64,11 @@ class Plex {
 
         $url = sprintf("/library/metadata/%d", $sRatingKey);
         $xml = simplexml_load_string($this->_get($url));
+
+
+        if (!$xml) {
+            return new stdClass;
+        }
 
         foreach ($xml->children() as $type => $child) {
             return $this->_mediaToObject($type, $child);

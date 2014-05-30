@@ -1,8 +1,15 @@
 <div class="episode-details-row details-row" ng-controller="DetailsEpisodeCtrl">
   <div class="details-title-container">
-    <h1 class="show-title">{{ plexItem.grandparentTitle }}</h1>
+    <h1 class="show-title">
+      <a ng-href="#/details/{{ plexItem.grandparentRatingKey }}">{{ plexItem.grandparentTitle }}</a>
+    </h1>
     <h2 class="episode-title">{{ plexItem.title }}</h2>
-    <h3 class="episode-index">S{{ plexItem.parentIndex | ddigit }}E{{ plexItem.index | ddigit }}</h3>
+    <h3 class="episode-index">
+      <a ng-href="#/details/{{ plexItem.parentRatingKey }}">
+        S{{ plexItem.parentIndex | ddigit }}
+      </a>
+      E{{ plexItem.index | ddigit }}
+    </h3>
   </div>
 
    <div class="details-metadata-container">
