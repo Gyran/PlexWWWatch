@@ -10,6 +10,7 @@ class PlexWatch {
     function __construct($dbpath, $grouped = false) {
         $dsn =  "sqlite:" . $dbpath;
         $this->_dbh = new PDO($dsn);
+        $this->_dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
         $this->_grouped = $grouped;
     }
